@@ -25,9 +25,12 @@ YTPMVE requires the following to run:
 
 1. Download and extract the *.zip from [this repository](https://github.com/Cantersoft/YTPMVE).
 2. Enter the `\YTPMVE` subfolder, and
-a. if you use Vegas Pro 14 or higher, delete `YTPMVE v0.110 - V13.cs`.
-b. if you use Vegas Pro 13 or lower, delete `YTPMVE v0.110.cs`.
-c. finally, if you have Python 3 installed, install the mido module via pip;
+
+	a. if you use Vegas Pro 14 or higher, delete `YTPMVE v0.110 - V13.cs`.
+	
+	b. if you use Vegas Pro 13 or lower, delete `YTPMVE v0.110.cs`.
+	
+	c. finally, if you have Python 3 installed, install the mido module via pip;
 	  ```
     pip install mido
 	  ```
