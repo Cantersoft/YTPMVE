@@ -34,7 +34,7 @@ YTPMVE requires the following to run:
 	  ```
     pip install mido
 	  ```
-  	* The executable file is superfluous if Python is installed, and you can safely delete it.
+  	* The executable file is superfluous if Python and mido are installed, and you can safely delete it.
 	* Note: the executable file sometimes doesn't work properly. Try installing Python and mido, and deleting the executable if performance is poor.
 3. Copy the YTPMVE folder and paste it inside Vegas Pro's Script Menu folder, which should look something like `C:\Program Files\VEGAS\VEGAS Pro XX.0\Script Menu`.
 
