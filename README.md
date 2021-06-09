@@ -55,5 +55,8 @@ along to the contents of the MIDI file! The fun has been doubled!
 Click Tools > Scripting > YTPMVE > [whatever option in here **doesn't** end with "Py"], and then select the MIDI file from earlier steps. YTPMVE will then automatically 
 synchronize your video clip to the song.
 
+In special situations, some notes may result in indeterminate clip durations. When this happens, you'll get a warning and markers will be added at such points in the
+timeline. 
+
 Note: YTPMVE does **not** pitch shift audio samples automatically. This would be a pointless feature since it's already standard in digital audio workstations.
 [Learn how to generate the audio for a YTPMV](https://youtu.be/RP8MKrwXYKI).
