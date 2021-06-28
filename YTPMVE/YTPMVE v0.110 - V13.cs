@@ -16,11 +16,11 @@ public class EntryPoint
 		string[] YTPMVEFileNames = {"YTPMVE v0.110 Py.py", "YTPMVE v0.110 Py.exe"};
 		
 		try{
-			System.Diagnostics.Process.Start(@Directory.GetCurrentDirectory() + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[0]).WaitForExit();//Initiate the Python script and wait for it to finish.
+			System.Diagnostics.Process.Start(vegas.InstallationDirectory + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[0]).WaitForExit();//Initiate the Python script and wait for it to finish.
 		}
 		catch{
 			try{
-				System.Diagnostics.Process.Start(@Directory.GetCurrentDirectory() + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[1]).WaitForExit();//Or initiate the executable and wait for it to finish.
+				System.Diagnostics.Process.Start(vegas.InstallationDirectory + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[1]).WaitForExit();//Or initiate the executable and wait for it to finish.
 			}
 			catch{
 				MessageBox.Show("An error occurred while attempting to launch \"" + YTPMVEFileNames[0] + "\" or \"" + YTPMVEFileNames[1] + "\"! The file may be missing or named incorrectly.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -29,7 +29,7 @@ public class EntryPoint
 
 		}
 		
-		string path = Directory.GetCurrentDirectory();
+		string path = vegas.InstallationDirectory;
 		
 		currentVegasApp = vegas;
 		TrackEvent currentEvent;
