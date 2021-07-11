@@ -1,36 +1,32 @@
-//YTPMVE v0.110 | © Matthew Hansen
-//04282021
+//YTPMVE v0.112 | © Cantersoft
+//07112021
 using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ScriptPortal.Vegas;
 
-
-public class EntryPoint
-{
+public class EntryPoint{
     Vegas currentVegasApp;
-	public void FromVegas(Vegas vegas)
-	{
+	public void FromVegas(Vegas vegas){
+
+		string path = vegas.InstallationDirectory;
+		string[] YTPMVEFileNames = {"YTPMVE v0.111 Py.py", "YTPMVE v0.110 Py.exe"};
 		
-		string[] YTPMVEFileNames = {"YTPMVE v0.110 Py.py", "YTPMVE v0.110 Py.exe"};
-		
+		//This should be updated later so that YTPMVEFileNames is iterated through, thus eliminating the nesdted try-catch.
 		try{
-			System.Diagnostics.Process.Start(vegas.InstallationDirectory + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[0]).WaitForExit();//Initiate the Python script and wait for it to finish.
+			System.Diagnostics.Process.Start(path + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[0]).WaitForExit();//Initiate the Python script and wait for it to finish.
 		}
 		catch{
 			try{
-				System.Diagnostics.Process.Start(vegas.InstallationDirectory + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[1]).WaitForExit();//Or initiate the executable and wait for it to finish.
+				System.Diagnostics.Process.Start(path + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[1]).WaitForExit();//Or initiate the executable and wait for it to finish.
 			}
 			catch{
 				MessageBox.Show("An error occurred while attempting to launch \"" + YTPMVEFileNames[0] + "\" or \"" + YTPMVEFileNames[1] + "\"! The file may be missing or named incorrectly.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}	
-
 		}
-		
-		string path = vegas.InstallationDirectory;
-		
+
 		currentVegasApp = vegas;
 		TrackEvent currentEvent;
 		TrackEvent sourceEvent;		
@@ -43,30 +39,45 @@ public class EntryPoint
 		
 		bool timestampsContainsNulls = false;
 
-		if (Convert.ToString(arrTimeCodesSource[0]) == "TrackError"){
-			MessageBox.Show("An error occurred because there are " + Convert.ToString(arrTimeCodesSource[1]) + " tracks in the MIDI file you selected. Currently, this script only supports 1 track. Pls forgiv.", "Track Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+		//Error handling/avoidance
+		if (arrTimeCodesSource.Length == 0){
+			MessageBox.Show("No timecodes could be read because timestamps.txt is blank!", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return;			
+		}
+		
+		if (Convert.ToString(arrTimeCodesSource[0]) == "Error"){
+			MessageBox.Show(arrTimeCodesSource[2], arrTimeCodesSource[1], MessageBoxButtons.OK, MessageBoxIcon.Error);
 			return;
 		}		
 		
+		//This region of the code is now much stricter about what data is allowed into the second array. You can put lots of random crap in timestamps.txt now and it will still mostly work.
+		//The only thing that hasn't been fixed is that in situations in which the second value on a line is non-numerical, it gets passed in, and ultimately set to 0. This should be fixed later.
 		for (int i = 0; i < arrTimeCodesSource.Length; i++){
-			if (arrTimeCodesSource[i].Contains("NULL")){
-				strCurrentEventStart = arrTimeCodesSource[i].Split(',')[0];
-				arrTimeCodes.Add(strCurrentEventStart + "," + strDefaultEventDuration);
+			try{
+				Double.Parse(arrTimeCodesSource[i].Split(',')[0]);//Assure the first value is numerical
+				if (!(arrTimeCodesSource[i].Contains(","))){
+					continue;//Don't read data from undelimited lines
+				}
+				if (arrTimeCodesSource[i].Split(',')[1] == "NULL"){
+					strCurrentEventStart = arrTimeCodesSource[i].Split(',')[0];
+					arrTimeCodes.Add(strCurrentEventStart + "," + strDefaultEventDuration);
 
-				currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(Double.Parse(strCurrentEventStart)), "NULL DURATION"));
-				timestampsContainsNulls = true;
+					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(Double.Parse(strCurrentEventStart)), "NULL DURATION"));
+					timestampsContainsNulls = true;
+				}
+				else{
+					arrTimeCodes.Add(arrTimeCodesSource[i]);
+				}
 			}
-			else{
-				arrTimeCodes.Add(arrTimeCodesSource[i]);
-			}
+			catch{
+				//Ignore invalid data
+			}			
 		}
 
 		if(timestampsContainsNulls){
 			MessageBox.Show("Some notes were overlapping or invalid, and thus their durations could not be determined. Markers have been added at such positions in the timeline.", "Warning" , MessageBoxButtons.OK, MessageBoxIcon.Warning);		
 		}
-		
-		
-		
+			
 		for (int i = 0; i < currentVegasApp.Project.Tracks.Count; i++){
 			try{
 				sourceEvent = currentVegasApp.Project.Tracks[i].Events[0];

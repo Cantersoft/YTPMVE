@@ -1,8 +1,28 @@
-#YTPMVE v0.110 | © Matthew Hansen
-#04282021
+#YTPMVE v0.111 | © Cantersoft
+#07092021
+
+import os
+from os import path
+
+try:
+    os.makedirs((path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/')))
+except FileExistsError:
+    pass
+
+YTPMVE_file= open(path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/timestamps.txt'), 'w')
 
 import tkinter.filedialog as tf
 import tkinter
+
+try:
+    import mido
+except ModuleNotFoundError as error:
+    YTPMVE_file.write("Error"+"\n")
+    YTPMVE_file.write("ModuleNotFoundError"+"\n")
+    YTPMVE_file.write(str(error)+". Module missing. Install mido with the command \"pip install mido\" in the command prompt and try again.")
+    YTPMVE_file.close()
+    exit()
+
 
 root = tkinter.Tk()
 root.withdraw()
@@ -10,23 +30,12 @@ MIDI_filename = tf.askopenfilename(initialdir = "/",title= "Select MIDI file", f
 print("Opened", MIDI_filename)
 root.destroy()
 
-import mido
-import os
-from os import path
-
-
-try:
-    os.makedirs((path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/')))
-except:
-    pass
-
 MIDI_file=mido.MidiFile(MIDI_filename)
-YTPMVE_file= open(path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/timestamps.txt'), 'w')
-
 
 if not len(MIDI_file.tracks)-1 == 1:#reject files with more than one track or zero tracks
+    YTPMVE_file.write("Error"+"\n")
     YTPMVE_file.write("TrackError"+"\n")
-    YTPMVE_file.write(str(len(MIDI_file.tracks)-1))
+    YTPMVE_file.write("An error occurred because there are "+str(len(MIDI_file.tracks)-1)+" tracks in the MIDI file you selected. Currently, this script only supports 1 track. Pls forgiv.")
     YTPMVE_file.close()
     exit()
 
