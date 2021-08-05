@@ -23,9 +23,9 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Build executable
       run: |
-        pyinstaller --onefile YTPMVE.py
+        pyinstaller YTPMVE.py
         mv ./dist/YTPMVE ./dist/YTPMVE.exe
     - uses: actions/upload-artifact@v2
       with:
-        name: executable
+        name: YTPMVE
         path: ./dist/YTPMVE.exe
