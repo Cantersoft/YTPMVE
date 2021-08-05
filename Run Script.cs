@@ -10,21 +10,24 @@ public class EntryPoint{
 
 		string path = vegas.InstallationDirectory;
 		string[] YTPMVEFileNames = {"YTPMVE.py", "YTPMVE.exe"};
-		const string quote = "\"";
-		string pyFilePath = quote + path + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[0] + quote;
-
-		try{
-			System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script and wait for it to finish.
-		}
-		catch (Exception e){
-				MessageBox.Show("An error occurred while attempting to launch the script! The file may be missing or named incorrectly. Error: \n" + e.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}	
 		
+		for (int i = 0; i < YTPMVEFileNames.Length; i++){
+			try{
+				System.Diagnostics.Process.Start(path + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[i]).WaitForExit(); // Start the Python script and wait for it to finish.
+				break;
+			}
+			catch{
+				if(i >= (YTPMVEFileNames.Length)-1){
+					MessageBox.Show("An error occurred while attempting to launch \"" + YTPMVEFileNames[0] + "\" or \"" + YTPMVEFileNames[1] + "\"! The file may be missing or named incorrectly.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+				continue;
+			}
+		}
 
 		currentVegasApp = vegas;
 		TrackEvent currentEvent;
-		TrackEvent sourceEvent;		
+		TrackEvent sourceEvent;
 		string[] arrTimeCodesSource = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\timestamps.txt"));
 		
 		List<String> arrTimeCodes = new List<String>();
