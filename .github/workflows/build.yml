@@ -26,7 +26,7 @@ jobs:
 
     - name: Build executable
       run: |
-        python3 -m nuitka --standalone --plugin-enable=tk-inter YTPMVE.py
+        python3 -m nuitka --onefile --windows-disable-console --plugin-enable=tk-inter YTPMVE.py
         mv ./YTPMVE.dist/YTPMVE ./YTPMVE.dist/YTPMVE.exe
     - uses: actions/upload-artifact@v2
       with:
