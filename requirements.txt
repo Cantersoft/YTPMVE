@@ -1,2 +1,2 @@
 mido
-pyinstaller
+nuitka

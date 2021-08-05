@@ -19,13 +19,15 @@ jobs:
         python-version: 3.9
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        sudo apt update -y
+        sudo apt install chrpath
+
     - name: Build executable
       run: |
-        pyinstaller YTPMVE.py
-        mv ./dist/YTPMVE ./dist/YTPMVE.exe
+        python3 -m nuitka --standalone --plugin-enable=tk-inter YTPMVE.py && ls -la
     - uses: actions/upload-artifact@v2
       with:
         name: YTPMVE
-        path: ./dist/YTPMVE.exe
+        path: ./YTPMVE.exe
