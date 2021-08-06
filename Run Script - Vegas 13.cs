@@ -3,23 +3,36 @@ using System.IO;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Sony.Vegas;
+using System.Diagnostics;
 
 public class EntryPoint{
     Vegas currentVegasApp;
 	public void FromVegas(Vegas vegas){
 
 		string path = vegas.InstallationDirectory;
-		string[] YTPMVEFileNames = {"YTPMVE.py", "YTPMVE.exe"};
-		const string quote = "\"";
-		string pyFilePath = quote + path + "\\Script Menu\\YTPMVE\\" + YTPMVEFileNames[0] + quote;
+		string pyFilePath = "\"" + path + "\\Script Menu\\YTPMVE\\YTPMVE.py" + "\"";
+		string exeFilePath = "\"" + path + "\\Script Menu\\YTPMVE\\YTPMVE.exe" + "\"";
 
-		try{
-			System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script and wait for it to finish.
+
+		try {
+			Process p = System.Diagnostics.Process.Start(exeFilePath);
+			p.WaitForExit(); // Start the bundled Python script and wait for it to finish.
+			if (p.ExitCode != 0) {
+				throw new Exception();
+			}
 		}
-		catch (Exception e){
+		catch {
+			try{
+				System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
+			}
+			catch (System.Exception e){
 				MessageBox.Show("An error occurred while attempting to launch the script! The file may be missing or named incorrectly. Error: \n" + e.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
-			}	
+			}
+		}
+
+		
+
 		
 
 		currentVegasApp = vegas;
@@ -36,7 +49,7 @@ public class EntryPoint{
 
 		//Error handling/avoidance
 		if (arrTimeCodesSource.Length == 0){
-			MessageBox.Show("No timecodes could be read because timestamps.txt is blank!", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show("No timecodes found in timestamps.txt, did the script fail?", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			return;			
 		}
 		
