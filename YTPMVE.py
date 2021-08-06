@@ -1,5 +1,14 @@
 import os
+from time import sleep as wait
 from os import path
+import sys
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'): # This code checks if the script is running in a bundled EXE or from the normal interpreter
+    isFrozen = True
+    print('Running from bundle')
+else:
+    isFrozen = False
+    print('Running from script')
 
 try:
     os.makedirs((path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/')))
@@ -14,12 +23,18 @@ import tkinter
 try:
     import mido
 except ModuleNotFoundError as error:
-    print("Error"+"\n")
-    print("ModuleNotFoundError"+"\n")
-    print(str(error)+". Module missing. Install mido with the command \"pip install mido\" in the command prompt and try again.")
-    YTPMVE_file.close()
-    input("Press Enter to continue...")
-    os._exit(1)
+    if isFrozen: # Do not print the messages if running from bundle
+        print("Trying again with the Python script instead...")
+        wait(5)
+        YTPMVE_file.close()
+        os._exit(1)
+    else:
+        print("Error"+"\n")
+        print("ModuleNotFoundError"+"\n")
+        print(str(error)+". Module missing. Install mido with the command \"pip install mido\" in the command prompt and try again.")
+        YTPMVE_file.close()
+        input("Press Enter to continue...")
+        os._exit(1)
 
 
 root = tkinter.Tk()
@@ -31,12 +46,18 @@ root.destroy()
 MIDI_file=mido.MidiFile(MIDI_filename)
 
 if not len(MIDI_file.tracks)-1 == 1 : # reject files with more than one track or zero tracks
-    print("Error"+"\n")
-    print("TrackError"+"\n")
-    print("An error occurred because there are too many tracks in the MIDI file you selected. Currently, this script only supports 1 track.")
-    YTPMVE_file.close()
-    input("Press Enter to continue...")
-    os._exit(1)
+    if isFrozen: # Do not print the messages if running from bundle
+        print("Trying again with the Python script instead...")
+        wait(5)
+        YTPMVE_file.close()
+        os._exit(1)
+    else:
+        print("Error"+"\n")
+        print("TrackError"+"\n")
+        print("An error occurred because there are too many tracks in the MIDI file you selected. Currently, this script only supports 1 track.")
+        YTPMVE_file.close()
+        input("Press Enter to continue...")
+        os._exit(1)
 
     
 current_time=0
