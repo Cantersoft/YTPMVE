@@ -14,10 +14,11 @@ import tkinter
 try:
     import mido
 except ModuleNotFoundError as error:
-    YTPMVE_file.write("Error"+"\n")
-    YTPMVE_file.write("ModuleNotFoundError"+"\n")
-    YTPMVE_file.write(str(error)+". Module missing. Install mido with the command \"pip install mido\" in the command prompt and try again.")
+    print("Error"+"\n")
+    print("ModuleNotFoundError"+"\n")
+    print(str(error)+". Module missing. Install mido with the command \"pip install mido\" in the command prompt and try again.")
     YTPMVE_file.close()
+    input("Press Enter to continue...")
     os._exit(1)
 
 
@@ -30,10 +31,11 @@ root.destroy()
 MIDI_file=mido.MidiFile(MIDI_filename)
 
 if not len(MIDI_file.tracks)-1 == 1 : # reject files with more than one track or zero tracks
-    YTPMVE_file.write("Error"+"\n")
-    YTPMVE_file.write("TrackError"+"\n")
-    YTPMVE_file.write("An error occurred because there are too many tracks in the MIDI file you selected. Currently, this script only supports 1 track.")
+    print("Error"+"\n")
+    print("TrackError"+"\n")
+    print("An error occurred because there are too many tracks in the MIDI file you selected. Currently, this script only supports 1 track.")
     YTPMVE_file.close()
+    input("Press Enter to continue...")
     os._exit(1)
 
     
