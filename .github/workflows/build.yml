@@ -29,13 +29,13 @@ jobs:
         name: YTPMVE
         path: ./dist/YTPMVE.exe
     - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            YTPMVE.py
-            YTPMVE.exe
-            *.cs
-            README.md
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          YTPMVE.py
+          YTPMVE.exe
+          *.cs
+          README.md
