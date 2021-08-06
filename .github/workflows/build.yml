@@ -28,14 +28,16 @@ jobs:
       with:
         name: YTPMVE
         path: ./dist/YTPMVE.exe
+    - name: Create zip file for pre-release
+      run: |
+        move ./dist/YTPMVE.exe .
+        Compress-Archive *.cs, YTPMVE.py, YTPMVE.exe, README.md YTPMVE-$(((get-date).ToUniversalTime()).ToString("yyyyMMddTHHmmssZ")).zip
     - uses: "marvinpinto/action-automatic-releases@latest"
+      name: Create pre-release
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: true
         title: "Development Build"
         files: |
-          YTPMVE.py
-          YTPMVE.exe
-          *.cs
-          README.md
+          YTPMVE*.zip
