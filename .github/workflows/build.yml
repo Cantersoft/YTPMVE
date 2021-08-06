@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -19,16 +19,12 @@ jobs:
         python-version: 3.9
     - name: Install dependencies
       run: |
-        python3 -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        sudo apt update -y
-        sudo apt install chrpath
-
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
     - name: Build executable
       run: |
-        python3 -m nuitka --onefile --windows-disable-console --plugin-enable=tk-inter YTPMVE.py
-        mv ./YTPMVE.dist/YTPMVE ./YTPMVE.dist/YTPMVE.exe
+        pyinstaller --onefile YTPMVE.py
     - uses: actions/upload-artifact@v2
       with:
-        name: YTPMVE
-        path: ./YTPMVE.dist/YTPMVE.exe
+        name: executable
+        path: ./dist/YTPMVE.exe
