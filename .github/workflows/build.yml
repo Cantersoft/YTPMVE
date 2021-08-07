@@ -31,7 +31,7 @@ jobs:
     - name: Create zip file for pre-release
       run: |
         move ./dist/YTPMVE.exe .
-        Compress-Archive *.cs, YTPMVE.py, YTPMVE.exe, README.md YTPMVE-$(((get-date).ToUniversalTime()).ToString("yyyyMMddTHHmmssZ")).zip
+        Compress-Archive *.cs, YTPMVE.py, YTPMVE.exe, README.md, install.bat YTPMVE-$(((get-date).ToUniversalTime()).ToString("yyyyMMdd-HHmmss")).zip
     - uses: "marvinpinto/action-automatic-releases@latest"
       name: Create pre-release
       with:
