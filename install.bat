@@ -34,6 +34,7 @@ set /p vegasversion=
 SET "var="&for /f "delims=0123456789" %%i in ("%vegasversion%") do set var=%%i
 if defined var (echo %vegasversion% is not a number! && pause && exit) else (echo Version: %vegasversion%)
 
+rmdir /s /q "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE"
 mkdir "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE"
 xcopy *.* "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE"
 echo Done! If Vegas was open, please rescan the script menu folder.

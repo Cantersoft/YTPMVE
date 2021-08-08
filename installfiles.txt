@@ -2,3 +2,4 @@
 YTPMVE.py
 install.bat
 README.md
+YTPMVE.exe
