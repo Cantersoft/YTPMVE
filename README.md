@@ -12,7 +12,7 @@ YTPMVE requires the following to run:
 
 ## Installation
 
-1. Download a [release](https://github.com/NathSoM/YTPMVE/releases)
+1. Download a [release](https://github.com/Cantersoft/YTPMVE/releases)
 2. (optional) Install Python and its dependencies and make sure they're on your system PATH.
 <!---
 3. Enter the YTPMVE folder, and
