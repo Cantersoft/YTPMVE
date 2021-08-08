@@ -12,28 +12,39 @@ public class EntryPoint{
 		string path = vegas.InstallationDirectory;
 		string pyFilePath = "\"" + path + "\\Script Menu\\YTPMVE\\YTPMVE.py" + "\"";
 		string exeFilePath = "\"" + path + "\\Script Menu\\YTPMVE\\YTPMVE.exe" + "\"";
-
-
-		try {
-			Process p = System.Diagnostics.Process.Start(exeFilePath);
-			p.WaitForExit(); // Start the bundled Python script and wait for it to finish.
-			if (p.ExitCode != 0) {
-				throw new Exception();
-			}
-		}
-		catch {
-			try{
-				System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
-			}
-			catch (System.Exception e){
-				MessageBox.Show("An error occurred while attempting to launch the script! The file may be missing or named incorrectly. Error: \n" + e.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-		}
+		bool isPythonPresent;
+		string[] lines;
+		bool retry;
 
 		
 
-		
+		Process p = System.Diagnostics.Process.Start("python", "--version");
+		p.WaitForExit(); // Check if Python is present
+		if (p.ExitCode != 0) {
+			isPythonPresent = false;
+		} else {
+			isPythonPresent = true;
+		}
+
+
+		Process p2 = System.Diagnostics.Process.Start(exeFilePath);
+		p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
+		lines = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
+		retry = bool.Parse(lines[2]);
+		if (p2.ExitCode != 0) {
+			if (isPythonPresent && retry) {
+				try{
+					System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
+				}
+				catch (System.Exception e){
+					MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message + "\n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+				} else {
+					MessageBox.Show("An error occurred while attempting to launch the script! \n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+			}
+		}
 
 		currentVegasApp = vegas;
 		TrackEvent currentEvent;
