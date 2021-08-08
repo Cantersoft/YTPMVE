@@ -38,7 +38,7 @@ jobs:
       name: Create pre-release
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest-dev"
+        automatic_release_tag: "latest"
         prerelease: true
         title: "Development Build"
         files: |
