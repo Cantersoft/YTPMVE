@@ -1,11 +1,8 @@
-import os, sys, subprocess
-from time import sleep as wait
-from os import path
+#github.com/Cantersoft/YTPMVE
+#08112021
 
-try:
-    os.remove(path.expandvars('%USERPROFILE%\\AppData\\Local\\Temp\\YTPMVE\\errlog.txt')) # Deletes previous error log
-except FileNotFoundError:
-    pass
+import os, sys, subprocess
+from os import path
 
 isFrozen = None
 isPythonPresent = None
@@ -27,12 +24,12 @@ else:
     print("Python is present")
 
 try:
-    os.makedirs((path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/')))
+    os.makedirs((path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE')))
 except FileExistsError:
     pass
 
 YTPMVE_file= open(path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/timestamps.txt'), 'w')
-ErrorLogFile = open(path.expandvars(r'%USERPROFILE%\\AppData\\Local\\Temp\\YTPMVE\\errlog.txt'), 'w')
+ErrorLogFile = open(path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/errlog.txt'), 'w')
 
 def exitScript(errMessage, exitCode, retryWithPythonScript):
     r = True
@@ -56,7 +53,7 @@ except ModuleNotFoundError as error:
 
 root = tkinter.Tk()
 root.withdraw()
-MIDI_filename = tf.askopenfilename(initialdir = "/",title= "Select MIDI file", filetypes =[('MIDI', '*.mid')])
+MIDI_filename = tf.askopenfilename(initialdir = "/Users",title= "Select MIDI file", filetypes =[('MIDI', '*.mid')])
 root.destroy()
 
 try:
@@ -123,6 +120,7 @@ for i, j in enumerate(note_starts):#i becomes a counter, and j becomes the corre
     YTPMVE_file.write(str(note_starts[i][0])+",")#Save first argument, note start time
     YTPMVE_file.write(str(note_durations[i])+"\n")#Save second argument, note duration
 
-
+YTPMVE_file.close()
+ErrorLogFile.close()
 
 exitScript("none", 0, False)

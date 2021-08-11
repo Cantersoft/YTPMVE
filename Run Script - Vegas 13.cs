@@ -1,3 +1,6 @@
+//github.com/Cantersoft/YTPMVE
+//08112021
+
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -9,9 +12,12 @@ public class EntryPoint{
     Vegas currentVegasApp;
 	public void FromVegas(Vegas vegas){
 
-		string path = vegas.InstallationDirectory;
-		string pyFilePath = "\"" + path + "\\Script Menu\\YTPMVE\\YTPMVE.py" + "\"";
-		string exeFilePath = "\"" + path + "\\Script Menu\\YTPMVE\\YTPMVE.exe" + "\"";
+		string path = vegas.InstallationDirectory + "\\Script Menu\\YTPMVE\\";
+
+		string[] YTPMVEFileNames = {"YTPMVE.py", "YTPMVE.exe"};
+		string pyFilePath = path + YTPMVEFileNames[0];
+		string exeFilePath = path + YTPMVEFileNames[1];
+		
 		bool isPythonPresent;
 		string[] lines;
 		bool retry;
@@ -26,24 +32,39 @@ public class EntryPoint{
 			isPythonPresent = true;
 		}
 
-
-		Process p2 = System.Diagnostics.Process.Start(exeFilePath);
-		p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
-		lines = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
-		retry = bool.Parse(lines[2]);
-		if (p2.ExitCode != 0) {
-			if (isPythonPresent && retry) {
-				try{
-					System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
+		/**
+		I know it's very clunky to have duplicated code like this, but there needs to be some sort of failsafe for if the executable is missing.
+		This can only be a temporary solution while multiple error handling methods are half-implemented, but it demonstrates how the try-catch 
+		should work.
+		**/
+		try{
+			Process p2 = System.Diagnostics.Process.Start(exeFilePath);
+			p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
+			lines = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
+			retry = bool.Parse(lines[2]);
+			if (p2.ExitCode != 0) {
+				if (isPythonPresent && retry) {
+					try{
+						System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
+					}
+					catch (System.Exception e){
+						MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message + "\n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
+					}
+					} else {
+						MessageBox.Show("An error occurred while attempting to launch the script! \n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
 				}
-				catch (System.Exception e){
-					MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message + "\n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-				} else {
-					MessageBox.Show("An error occurred while attempting to launch the script! \n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
 			}
+		}
+		catch{
+			try{
+				System.Diagnostics.Process.Start(pyFilePath).WaitForExit();
+			}
+			catch{
+				MessageBox.Show("An error occurred while attempting to launch \"" + YTPMVEFileNames[0] + "\" or \"" + YTPMVEFileNames[1] + "\"! The file may be missing or named incorrectly.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}	
 		}
 
 		currentVegasApp = vegas;
@@ -60,7 +81,7 @@ public class EntryPoint{
 
 		//Error handling/avoidance
 		if (arrTimeCodesSource.Length == 0){
-			MessageBox.Show("No timecodes found in timestamps.txt, did the script fail?", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show("No timecodes found in timestamps.txt!", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			return;			
 		}
 		
