@@ -34,6 +34,10 @@ jobs:
         mkdir YTPMVE
         Get-Content .\installfiles.txt | foreach { mv $_ .\YTPMVE}
         Compress-Archive .\YTPMVE YTPMVE-$(((get-date).ToUniversalTime()).ToString("yyyyMMdd-HHmmss")).zip
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Dev-Release
+        path: ./YTPMVE*.zip
     - uses: "marvinpinto/action-automatic-releases@latest"
       name: Create pre-release
       with:
