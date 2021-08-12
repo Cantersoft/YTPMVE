@@ -32,39 +32,23 @@ public class EntryPoint{
 			isPythonPresent = true;
 		}
 
-		/**
-		I know it's very clunky to have duplicated code like this, but there needs to be some sort of failsafe for if the executable is missing.
-		This can only be a temporary solution while multiple error handling methods are half-implemented, but it demonstrates how the try-catch 
-		should work.
-		**/
-		try{
-			Process p2 = System.Diagnostics.Process.Start(exeFilePath);
-			p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
-			lines = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
-			retry = bool.Parse(lines[2]);
-			if (p2.ExitCode != 0) {
-				if (isPythonPresent && retry) {
-					try{
-						System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
-					}
-					catch (System.Exception e){
-						MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message + "\n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-						return;
-					}
-					} else {
-						MessageBox.Show("An error occurred while attempting to launch the script! \n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-						return;
+		Process p2 = System.Diagnostics.Process.Start(exeFilePath);
+		p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
+		lines = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
+		retry = bool.Parse(lines[2]);
+		if (p2.ExitCode != 0) {
+			if (isPythonPresent && retry) {
+				try{
+					System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
 				}
+				catch (System.Exception e){
+					MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message + "\n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+				} else {
+					MessageBox.Show("An error occurred while attempting to launch the script! \n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
 			}
-		}
-		catch{
-			try{
-				System.Diagnostics.Process.Start(pyFilePath).WaitForExit();
-			}
-			catch{
-				MessageBox.Show("An error occurred while attempting to launch \"" + YTPMVEFileNames[0] + "\" or \"" + YTPMVEFileNames[1] + "\"! The file may be missing or named incorrectly.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}	
 		}
 
 		currentVegasApp = vegas;
