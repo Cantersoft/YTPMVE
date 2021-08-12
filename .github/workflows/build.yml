@@ -38,6 +38,13 @@ jobs:
       with:
         name: Dev-Release
         path: ./YTPMVE*.zip
+
+  create-release:
+
+    runs-on: windows-latest
+    continue-on-error: true
+
+    steps:
     - uses: "marvinpinto/action-automatic-releases@latest"
       name: Create pre-release
       with:
