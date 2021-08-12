@@ -7,10 +7,6 @@ on:
     branches: [ master ]
 
 jobs:
-
-  strategy:
-    max-parallel: 1
-
   build:
 
     runs-on: windows-latest
@@ -46,6 +42,7 @@ jobs:
   create-release:
 
     runs-on: windows-latest
+    needs: build
     continue-on-error: true
 
     steps:
