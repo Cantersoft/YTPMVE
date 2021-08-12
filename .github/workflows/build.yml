@@ -46,6 +46,12 @@ jobs:
     continue-on-error: true
 
     steps:
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: Dev-Release
+
     - uses: "marvinpinto/action-automatic-releases@latest"
       name: Create pre-release
       with:
