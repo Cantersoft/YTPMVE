@@ -120,6 +120,5 @@ for i, j in enumerate(note_starts):#i becomes a counter, and j becomes the corre
     YTPMVE_file.write(str(note_starts[i][0])+",")#Save first argument, note start time
     YTPMVE_file.write(str(note_durations[i])+"\n")#Save second argument, note duration
 
-YTPMVE_file.close()
 
 exitScript("none", 0, False)
