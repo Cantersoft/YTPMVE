@@ -67,7 +67,7 @@ public class EntryPoint{
 
 		//Error handling/avoidance
 		if (arrTimeCodesSource.Length == 0){
-			MessageBox.Show("No timecodes found in timestamps.txt, did the script fail?", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show("No timecodes found in timestamps.txt!", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			return;			
 		}
 		
