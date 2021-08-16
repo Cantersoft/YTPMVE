@@ -26,9 +26,14 @@ public class EntryPoint{
 			isPythonPresent = true;
 		}
 
+		try {
+			Process p2 = System.Diagnostics.Process.Start(exeFilePath);
+			p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
+		} catch (System.Exception e){
+			MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message + "\n\nDetails: \n" + lines[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return;	
+		}
 
-		Process p2 = System.Diagnostics.Process.Start(exeFilePath);
-		p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
 		lines = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
 		retry = bool.Parse(lines[2]);
 		if (p2.ExitCode != 0) {

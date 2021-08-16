@@ -12,9 +12,10 @@ public class EntryPoint{
 		string path = vegas.InstallationDirectory;
 		string pyFilePath = "\"" + path + "\\Script Menu\\YTPMVE\\YTPMVE.py" + "\"";
 		string exeFilePath = "\"" + path + "\\Script Menu\\YTPMVE\\YTPMVE.exe" + "\"";
-		bool isPythonPresent;
 		string[] lines;
+		bool isPythonPresent;
 		bool retry;
+		int lastExitCode;
 
 		
 
@@ -26,12 +27,18 @@ public class EntryPoint{
 			isPythonPresent = true;
 		}
 
+		try {
+			Process p2 = System.Diagnostics.Process.Start(exeFilePath);
+			p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
+			lastExitCode = p2.ExitCode;
+		} catch (System.Exception e){
+			MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return;	
+		}
 
-		Process p2 = System.Diagnostics.Process.Start(exeFilePath);
-		p2.WaitForExit(); // Start the bundled Python script and wait for it to finish.
 		lines = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
 		retry = bool.Parse(lines[2]);
-		if (p2.ExitCode != 0) {
+		if (lastExitCode != 0) {
 			if (isPythonPresent && retry) {
 				try{
 					System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
