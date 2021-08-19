@@ -1,6 +1,3 @@
-#github.com/Cantersoft/YTPMVE
-#08112021
-
 import os, sys, subprocess
 from os import path
 
@@ -47,7 +44,7 @@ import tkinter
 try:
     import mido
 except ModuleNotFoundError as error:
-        exitScript("Module \"mido\" not found, install it with the command \"pip install mido\".", 1, False)
+    exitScript(str(error)+". Module missing.", 1, False)
 
 
 
@@ -65,9 +62,9 @@ else:
 
 
 if not len(MIDI_file.tracks)-1 == 1 : # reject files with more than one track or zero tracks
-        exitScript("Too many tracks in MIDI File!", 1, False)
+        exitScript("Multiple tracks are present in the MIDI File! This script currently only supports single-track MIDI files.", 1, False)
 
-    
+
 current_time=0
 start=0
 MIDI_time=[]
