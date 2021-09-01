@@ -28,12 +28,13 @@ except FileExistsError:
 YTPMVE_file= open(path.expandvars(r'%USERPROFILE%\AppData\Local\Temp\YTPMVE\timestamps.txt'), 'w')
 ErrorLogFile = open(path.expandvars(r'%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt'), 'w')
 
-def exitScript(errMessage, exitCode, retryWithPythonScript):
+def exitScript(errMessage, exitCode, retryWithPythonScript, trackNumber):
     r = True
     r = retryWithPythonScript
     ErrorLogFile.write(errMessage + "\n")
     ErrorLogFile.write(str(exitCode) + "\n")
-    ErrorLogFile.write(str(r))
+    ErrorLogFile.write(str(r) + "\n")
+    ErrorLogFile.write(trackNumber)
     ErrorLogFile.close()
     YTPMVE_file.close()
     os._exit(exitCode)
@@ -46,6 +47,7 @@ try:
 except ModuleNotFoundError as error:
     exitScript(str(error)+". Module missing.", 1, False)
 
+workingTrack = input("Enter the track you want to work on: ")
 
 
 root = tkinter.Tk()
@@ -118,4 +120,4 @@ for i, j in enumerate(note_starts):#i becomes a counter, and j becomes the corre
     YTPMVE_file.write(str(note_durations[i])+"\n")#Save second argument, note duration
 
 
-exitScript("none", 0, False)
+exitScript("none", 0, False, workingTrack)

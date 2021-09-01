@@ -66,6 +66,7 @@ public class EntryPoint{
 			return;			
 		}
 
+
 		
 		currentVegasApp = vegas;
 		TrackEvent currentEvent;
@@ -77,8 +78,7 @@ public class EntryPoint{
 		String strCurrentEventStart = "0";
 		
 		bool timestampsContainsNulls = false;
-
-			
+		int workingTrack = int.Parse(errlog[3]) - 1;
 		
 		//This region of the code is now much stricter about what data is allowed into the second array. You can put lots of random crap in timestamps.txt now and it will still mostly work.
 		//The only thing that hasn't been fixed is that in situations in which the second value on a line is non-numerical, it gets passed in, and ultimately set to 0. This should be fixed later.
@@ -110,18 +110,18 @@ public class EntryPoint{
 			
 		for (int i = 0; i < currentVegasApp.Project.Tracks.Count; i++){
 			try{
-				sourceEvent = currentVegasApp.Project.Tracks[i].Events[0];
-				currentEvent = currentVegasApp.Project.Tracks[i].Events[0];
+				sourceEvent = currentVegasApp.Project.Tracks[workingTrack].Events[0];
+				currentEvent = currentVegasApp.Project.Tracks[workingTrack].Events[0];
 			}
 			catch{
 				continue;
 			}
 			foreach (string j in arrTimeCodes){
 				string[] current_note = j.Split(',');//Parse "1,2" into {"1","2"}
-				var copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[i], Timecode.FromPositionString(current_note[0], RulerFormat.Seconds));
+				var copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[workingTrack], Timecode.FromPositionString(current_note[0], RulerFormat.Seconds));
 				copiedEvent.AdjustStartLength(Timecode.FromPositionString(current_note[0], RulerFormat.Seconds), Timecode.FromPositionString(current_note[1], RulerFormat.Seconds), false);
 			}
-			currentVegasApp.Project.Tracks[i].Events.Remove(sourceEvent);
+			currentVegasApp.Project.Tracks[workingTrack].Events.Remove(sourceEvent);
 		}		
 	}			
 }
