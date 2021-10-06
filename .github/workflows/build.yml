@@ -1,0 +1,63 @@
+name: Build executable
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Build executable
+      run: |
+        pyinstaller --onefile YTPMVE.py 
+    - uses: actions/upload-artifact@v2
+      with:
+        name: YTPMVE
+        path: ./dist/YTPMVE.exe
+    - name: Create zip file for pre-release
+      run: |
+        move ./dist/YTPMVE.exe .
+        mkdir YTPMVE
+        Get-Content .\installfiles.txt | foreach { mv $_ .\YTPMVE}
+        Compress-Archive .\YTPMVE YTPMVE-$(((get-date).ToUniversalTime()).ToString("yyyyMMdd-HHmmss")).zip
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Dev-Release
+        path: ./YTPMVE*.zip
+
+  create-release:
+
+    runs-on: windows-latest
+    needs: build
+    continue-on-error: true
+
+    steps:
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: Dev-Release
+
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      name: Create pre-release
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          YTPMVE*.zip

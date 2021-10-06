@@ -1,12 +1,42 @@
-import os
+import os, sys, subprocess
 from os import path
 
+isFrozen = None
+isPythonPresent = None
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'): # This code checks if the script is running in a bundled EXE or from the normal interpreter
+    isFrozen = True
+    print('Running from bundle')
+else:
+    isFrozen = False
+    print('Running from script')
+
 try:
-    os.makedirs((path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/')))
+    subprocess.run(["python", "--version"]) # This checks if python is present
+except:
+    isPythonPresent = False
+    print("Python is not present")
+else:
+    isPythonPresent = True
+    print("Python is present")
+
+try:
+    os.makedirs((path.expandvars(r'%USERPROFILE%\AppData\Local\Temp\YTPMVE')))
 except FileExistsError:
     pass
 
-YTPMVE_file= open(path.expandvars(r'%USERPROFILE%/AppData/Local/Temp/YTPMVE/timestamps.txt'), 'w')
+YTPMVE_file= open(path.expandvars(r'%USERPROFILE%\AppData\Local\Temp\YTPMVE\timestamps.txt'), 'w')
+ErrorLogFile = open(path.expandvars(r'%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt'), 'w')
+
+def exitScript(errMessage, exitCode, retryWithPythonScript):
+    r = True
+    r = retryWithPythonScript
+    ErrorLogFile.write(errMessage + "\n")
+    ErrorLogFile.write(str(exitCode) + "\n")
+    ErrorLogFile.write(str(r))
+    ErrorLogFile.close()
+    YTPMVE_file.close()
+    os._exit(exitCode)
 
 import tkinter.filedialog as tf
 import tkinter
@@ -14,29 +44,27 @@ import tkinter
 try:
     import mido
 except ModuleNotFoundError as error:
-    YTPMVE_file.write("Error"+"\n")
-    YTPMVE_file.write("ModuleNotFoundError"+"\n")
-    YTPMVE_file.write(str(error)+". Module missing. Install mido with the command \"pip install mido\" in the command prompt and try again.")
-    YTPMVE_file.close()
-    os._exit(1)
+    exitScript(str(error)+". Module missing.", 1, False)
+
 
 
 root = tkinter.Tk()
 root.withdraw()
-MIDI_filename = tf.askopenfilename(initialdir = "/",title= "Select MIDI file", filetypes =[('MIDI', '*.mid')])
-print("Opened", MIDI_filename)
+MIDI_filename = tf.askopenfilename(initialdir = "\\", title= "Select MIDI file", filetypes =[('MIDI', '*.mid')])
 root.destroy()
 
-MIDI_file=mido.MidiFile(MIDI_filename)
+try:
+    MIDI_file=mido.MidiFile(MIDI_filename)
+except FileNotFoundError:
+    exitScript("No file selected!", 1, False)
+else:
+    print("Opened", MIDI_filename)
+
 
 if not len(MIDI_file.tracks)-1 == 1 : # reject files with more than one track or zero tracks
-    YTPMVE_file.write("Error"+"\n")
-    YTPMVE_file.write("TrackError"+"\n")
-    YTPMVE_file.write("An error occurred because there are too many tracks in the MIDI file you selected. Currently, this script only supports 1 track.")
-    YTPMVE_file.close()
-    os._exit(1)
+        exitScript("Multiple tracks are present in the MIDI File! This script currently only supports single-track MIDI files.", 1, False)
 
-    
+
 current_time=0
 start=0
 MIDI_time=[]
@@ -75,13 +103,6 @@ for msg in MIDI_file: # Change this so that we don't look at the if statement ex
                     print()
                     print("   Matching note found in note_starts at index position", list_match)
                     break
-               
-            
-            
-           
-            
-
-
 
         
 #print(str(MIDI_time)) #Print all the note starts and lengths, optionally.
@@ -96,4 +117,5 @@ for i, j in enumerate(note_starts):#i becomes a counter, and j becomes the corre
     YTPMVE_file.write(str(note_starts[i][0])+",")#Save first argument, note start time
     YTPMVE_file.write(str(note_durations[i])+"\n")#Save second argument, note duration
 
-YTPMVE_file.close()
+
+exitScript("none", 0, False)

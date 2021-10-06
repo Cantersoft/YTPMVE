@@ -8,12 +8,12 @@ YTPMidiVideoEditor (YTPMVE) is a collection of scripts that allows video clips t
 YTPMVE requires the following to run:
 
 * Vegas Pro
-* Python 3 and mido
+* Python 3 and mido (optional, used for the fallback script)
 
 ## Installation
 
-1. Download the repository, either via the green button on the top of the page or with a git clone
-2. Install the dependencies and make sure they're on your system PATH.
+1. Download a [release](https://github.com/Cantersoft/YTPMVE/releases)
+2. (optional) Install Python and its dependencies and make sure they're on your system PATH.
 <!---
 3. Enter the YTPMVE folder, and
 
@@ -21,7 +21,12 @@ YTPMVE requires the following to run:
 	
 	b. if you use Vegas Pro 13 or lower, delete `Run Script.cs`.
 ---> 
-3. Copy the entire YTPMVE folder and paste it inside Vegas Pro's Script Menu folder, which is located at `C:\Program Files\VEGAS\VEGAS Pro XX.0\Script Menu`.
+3. Either:
+	
+	* Use the `install.bat` script, which requires administrator privileges to copy to folders inside Program Files, like the Script Menu folder
+	
+	or
+	* Copy the entire YTPMVE folder from the zip file and paste it into Vegas Pro's Script Menu folder, which is located at `C:\Program Files\VEGAS\VEGAS Pro XX.0\Script Menu`.
 
 ## Usage
 
