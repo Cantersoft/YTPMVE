@@ -43,6 +43,11 @@ import tkinter
 
 try:
     import mido
+    
+    #Removing the key signature handler, which sometimes causes errors.
+    import mido.midifiles.meta
+    del mido.midifiles.meta._META_SPECS[0x59]
+    del mido.midifiles.meta._META_SPEC_BY_TYPE['key_signature']
 except ModuleNotFoundError as error:
     exitScript(str(error)+". Module missing.", 1, False)
 
