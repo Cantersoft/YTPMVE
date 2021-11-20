@@ -66,31 +66,33 @@ else:
     print("Opened", MIDI_filename)
 
 
-if not len(MIDI_file.tracks)-1 == 1 : # reject files with more than one track or zero tracks
-        exitScript("Multiple tracks are present in the MIDI File! This script currently only supports single-track MIDI files.", 1, False)
+#if not len(MIDI_file.tracks)-1 == 1 : # reject files with more than one track or zero tracks
+#        exitScript("Multiple tracks are present in the MIDI File! This script currently only supports single-track MIDI files.", 1, False)
 
 
 current_time=0
 start=0
 MIDI_time=[]
 
-note_starts=[] # All note start times (seconds)
-note_durations=[] # All note durations (seconds)
+note_channels=[]     # All note channels (0-15) 
+note_starts=[]      # All note start times (seconds)
+note_durations=[]   # All note durations (seconds)
         
 for msg in MIDI_file: # Change this so that we don't look at the if statement except the first few times
     if msg.is_meta:
         start=start+1
         continue
     else:
-        #print("Message:", msg)
+        print("Message:", msg)
         current_time=float(msg.time)+current_time
         MIDI_time.append(current_time)
         if msg.type == "note_on":
-           print('Note Void: ', msg.time)
-           print('Note Start Time: ', current_time)
+            print('Note Void: ', msg.time)
+            print('Note Start Time: ', current_time)
 
-           note_starts.append([current_time, msg.note])
-           note_durations.append("NULL") # We must have a 1:1 ratio of note_offs for note_ons. This will create a space in note_durations which will be filled later.
+            note_channels.append(msg.channel)
+            note_starts.append([current_time, msg.note])
+            note_durations.append("NULL") # We must have a 1:1 ratio of note_offs for note_ons. This will create a space in note_durations which will be filled later.
 
         elif msg.type == "note_off":
             print('Note Duration: ', msg.time)
@@ -118,7 +120,8 @@ for msg in MIDI_file: # Change this so that we don't look at the if statement ex
 for i, j in enumerate(note_starts):#i becomes a counter, and j becomes the corresponding value in note_starts
 
     #print(note_starts[i][0])
-    #print(note_durations[i])    
+    #print(note_durations[i])
+    YTPMVE_file.write(str(note_channels[i])+",")#Save channel number
     YTPMVE_file.write(str(note_starts[i][0])+",")#Save first argument, note start time
     YTPMVE_file.write(str(note_durations[i])+"\n")#Save second argument, note duration
 
