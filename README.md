@@ -30,7 +30,7 @@ YTPMVE requires the following to run:
 
 ## Usage
 
-**Support for multitrack MIDI has recently been added** There are still a couple of kinks, so try discarding unnecessary channels from your MIDI file if it's being troublesome.
+**Support for multitrack MIDI has recently been added.** There are still a couple of kinks, so try discarding unnecessary channels from your MIDI file if it's being troublesome.
 
 Once you've prepared your MIDI file, open Vegas Pro and create the same number of tracks as your MIDI file uses (if unsure, create 16), and place an event on each track that corresponds to the content of the MIDI channel you want synchronized with video. Be sure the timeline is entirely clear with the exception of those singular events. 
 The events will be duplicated multiple times so that they are in sync with the song. If, for example, you have two tracks with an event on each, the events will be copied
