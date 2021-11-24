@@ -14,20 +14,50 @@ public class EntryPoint{
 		string exeFilePath = "\"" + path + "YTPMVE.exe" + "\"";
 
 
-		try{
-			System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
+		bool isPythonPresent;
+		bool retry;
+		int lastExitCode;
+
+
+
+		Process p = System.Diagnostics.Process.Start("python", "--version");
+		p.WaitForExit(); // Check if Python is present
+		if (p.ExitCode != 0) {
+			isPythonPresent = false;
+		} 
+		else {
+			isPythonPresent = true;
 		}
-		catch{
-			try{
-				System.Diagnostics.Process.Start(exeFilePath).WaitForExit();//Or initiate the executable and wait for it to finish.
-			}
-			catch{
-				MessageBox.Show("An error occurred while attempting to launch \"" + pyFilePath + "\" or \"" + exeFilePath + "\"! The file may be missing or named incorrectly.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+		try {
+			Process p2 = System.Diagnostics.Process.Start(exeFilePath);
+			p2.WaitForExit(); // Start the executable and wait for it to finish.
+			lastExitCode = p2.ExitCode;
+		} 
+		catch (System.Exception e){
+			MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return;	
+		}
+		//Error handling/avoidance
+
+		string[] errlog = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
+
+		retry = bool.Parse(errlog[2]);
+		if (lastExitCode != 0) {
+			if (isPythonPresent && retry) {
+				try{
+					System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
+				}
+				catch (System.Exception e){
+					MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message + "\n\nDetails: \n" + errlog[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+			} 
+			else {
+				MessageBox.Show("An error occurred during execution of the script:\n" + errlog[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
-			}	
+			}
 		}
-
-
 		string[] arrTimeCodesSource = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\timestamps.txt"));
 		
 		if (arrTimeCodesSource.Length == 0){
