@@ -12,13 +12,12 @@ public class EntryPoint{
 		string path = vegas.InstallationDirectory + "\\Script Menu\\YTPMVE\\";//Full path to all scripts and files included with the installation of YTPMVE.
 		string pyFilePath = "\"" + path + "YTPMVE.py" + "\"";
 		string exeFilePath = "\"" + path + "YTPMVE.exe" + "\"";
-
-
+		
 		bool isPythonPresent;
-		bool retry;
-		int lastExitCode;
+		bool retry = false;
+		int lastExitCode = 1;
 
-
+		
 
 		Process p = System.Diagnostics.Process.Start("python", "--version");
 		p.WaitForExit(); // Check if Python is present
@@ -33,15 +32,14 @@ public class EntryPoint{
 			Process p2 = System.Diagnostics.Process.Start(exeFilePath);
 			p2.WaitForExit(); // Start the executable and wait for it to finish.
 			lastExitCode = p2.ExitCode;
-		} 
-		catch (System.Exception e){
-			MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-			return;	
+		} catch {
+			
 		}
-		//Error handling/avoidance
+
+		// Error handling
 
 		string[] errlog = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
-
+		
 		retry = bool.Parse(errlog[2]);
 		if (lastExitCode != 0) {
 			if (isPythonPresent && retry) {
@@ -68,36 +66,30 @@ public class EntryPoint{
 		
 		currentVegasApp = vegas;
 		TrackEvent currentEvent;
-		List<TrackEvent> sourceEvents = new List<TrackEvent>();
+		TrackEvent sourceEvent;		
 		
 		List<String> arrTimeCodes = new List<String>();
-		//HashSet<int> missingTrackIndices = new HashSet<int>();
 
 		String strDefaultEventDuration = "0.1";
 		String strCurrentEventStart = "0";
 		
 		bool timestampsContainsNulls = false;
-		bool tracksMissing = false;
+
 			
 		
 		//This region of the code is now much stricter about what data is allowed into the second array. You can put lots of random crap in timestamps.txt now and it will still mostly work.
-		//The only thing that hasn't been fixed is that in situations in which the duration value on a line is non-numerical, it gets passed in, and ultimately set to 0. This should be fixed later.
+		//The only thing that hasn't been fixed is that in situations in which the second value on a line is non-numerical, it gets passed in, and ultimately set to 0. This should be fixed later.
 		for (int i = 0; i < arrTimeCodesSource.Length; i++){
-			try{		
+			try{
+				Double.Parse(arrTimeCodesSource[i].Split(',')[0]);//Assure the first value is numerical
 				if (!(arrTimeCodesSource[i].Contains(","))){
 					continue;//Don't read data from undelimited lines
 				}
-				
-				string[] current_note = arrTimeCodesSource[i].Split(',');		
-
-				//Assure indices 0 and 1 are numerical. We don't worry about the third value cause it might be NULL.
-				Double.Parse(current_note[0]);
-				Double.Parse(current_note[1]);
-				
-				if (current_note[2] == "NULL"){
+				if (arrTimeCodesSource[i].Split(',')[1] == "NULL"){
+					strCurrentEventStart = arrTimeCodesSource[i].Split(',')[0];
 					arrTimeCodes.Add(strCurrentEventStart + "," + strDefaultEventDuration);
 
-					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(Double.Parse(current_note[1])), "NULL DURATION"));
+					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(Double.Parse(strCurrentEventStart)), "NULL DURATION"));
 					timestampsContainsNulls = true;
 				}
 				else{
@@ -113,43 +105,20 @@ public class EntryPoint{
 			MessageBox.Show("Some notes were overlapping or invalid, and thus their durations could not be determined. Markers have been added at such positions in the timeline.", "Warning" , MessageBoxButtons.OK, MessageBoxIcon.Warning);		
 		}
 			
-		try{
-			for (int i = 0; i < currentVegasApp.Project.Tracks.Count; i++){
-				try{
-					sourceEvents.Add(currentVegasApp.Project.Tracks[i].Events[0]); //Append to an array of source events.
-				}
-				catch{
-					//Don't add source events which do not exist.
-				}
-			}
-			currentEvent = currentVegasApp.Project.Tracks[0].Events[0];
-		}	
-		catch{
-			MessageBox.Show("No events exist in the timeline.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-			return;
-		}
-		foreach (string j in arrTimeCodes){
-			string[] current_note = j.Split(',');//Parse "1,2" into {"1","2"}
-			
+		for (int i = 0; i < currentVegasApp.Project.Tracks.Count; i++){
 			try{
-				currentEvent = currentVegasApp.Project.Tracks[int.Parse(current_note[0])].Events[0];
-				var copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[int.Parse(current_note[0])], Timecode.FromPositionString(current_note[1], RulerFormat.Seconds));
-				copiedEvent.AdjustStartLength(Timecode.FromPositionString(current_note[1], RulerFormat.Seconds), Timecode.FromPositionString(current_note[2], RulerFormat.Seconds), false);
+				sourceEvent = currentVegasApp.Project.Tracks[i].Events[0];
+				currentEvent = currentVegasApp.Project.Tracks[i].Events[0];
 			}
 			catch{
-				//missingTrackIndices.Add(int.Parse(current_note[0]));//remove duplicates
-				tracksMissing = true;
-			}	
-		}
-		
-		//missingTrackIndices = missingTrackIndices.Distinct().ToList();
-		
-		for (int i = 0; i < sourceEvents.Count; i++){
-			currentVegasApp.Project.Tracks[sourceEvents[i].Track.Index].Events.Remove(sourceEvents[i]);
-		}
-		if(tracksMissing){
-			//MessageBox.Show("Note data from tracks " + string.Join( ", ", missingTrackIndices.ToArray) + " was left out because there are not enough tracks.", "Warning" , MessageBoxButtons.OK, MessageBoxIcon.Warning); //Doesn't work because HashSet is broken
-			MessageBox.Show("Note data from some tracks was left out because there are not enough tracks.", "Warning" , MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				continue;
+			}
+			foreach (string j in arrTimeCodes){
+				string[] current_note = j.Split(',');//Parse "1,2" into {"1","2"}
+				var copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[i], Timecode.FromPositionString(current_note[0], RulerFormat.Seconds));
+				copiedEvent.AdjustStartLength(Timecode.FromPositionString(current_note[0], RulerFormat.Seconds), Timecode.FromPositionString(current_note[1], RulerFormat.Seconds), false);
+			}
+			currentVegasApp.Project.Tracks[i].Events.Remove(sourceEvent);
 		}		
-	}
+	}			
 }
