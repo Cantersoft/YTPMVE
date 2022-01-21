@@ -74,7 +74,7 @@ current_time=0
 start=0
 MIDI_time=[]
 
-note_channels=[]     # All note channels (0-15) 
+note_channels=[]    # All note channels (0-15) 
 note_starts=[]      # All note start times (seconds)
 note_durations=[]   # All note durations (seconds)
         
@@ -104,7 +104,7 @@ for msg in MIDI_file: # Change this so that we don't look at the if statement ex
             for i in range(len(note_starts)-1, -1, -1): # Reverse search the note starts list and find the note_on message that was probably linked to this note_off
                 print()
                 print("   Note start reverse search:", note_starts[i][1])
-                if note_starts[i][1]== msg.note:
+                if note_starts[i][1]==msg.note and note_channels[i]==msg.channel:
                     list_match=i
                     note_durations[list_match]=current_time-note_starts[i][0]
                     print()
