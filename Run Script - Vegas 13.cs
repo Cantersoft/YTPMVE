@@ -27,7 +27,7 @@ public class EntryPoint{
 			engineProcessName.AddRange(new [] {"", pyFilePath});
 		}	
 		else if (engineFilePath == exeFilePath){
-			engineProcessName.AddRange(new [] {"", engineFilePath});
+			engineProcessName.AddRange(new [] {"", exeFilePath});
 		}
 		else{
 			MessageBox.Show("engineFilePath variable has been set to an invalid value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -36,7 +36,7 @@ public class EntryPoint{
 		int lastExitCode;
 
 		try{
-			Process process = System.Diagnostics.Process.Start(engineProcessName[0], engineProcessName[1]);
+			Process process = System.Diagnostics.Process.Start(engineProcessName[1]);
 			process.WaitForExit();
 			lastExitCode = process.ExitCode;
 		}
