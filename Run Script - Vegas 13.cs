@@ -1,3 +1,5 @@
+//YTPMVE
+//20220528
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -8,57 +10,64 @@ using System.Diagnostics;
 public class EntryPoint{
     Vegas currentVegasApp;
 	public void FromVegas(Vegas vegas){
-
+		
 		string path = vegas.InstallationDirectory + "\\Script Menu\\YTPMVE\\";//Full path to all scripts and files included with the installation of YTPMVE.
 		string pyFilePath = "\"" + path + "YTPMVE.py" + "\"";
 		string exeFilePath = "\"" + path + "YTPMVE.exe" + "\"";
+		
+		
+		/*CHANGE THIS LINE TO CONTROL WHETHER THE EXECUTABLE OR PYTHON VERSION IS USED*/
+		string engineFilePath = exeFilePath; 
+		/*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+		
+		
+		List<string> engineProcessName = new List<string>();
+		
+		if (engineFilePath == pyFilePath){
+			engineProcessName.AddRange(new [] {"", pyFilePath});
+		}	
+		else if (engineFilePath == exeFilePath){
+			engineProcessName.AddRange(new [] {"", engineFilePath});
+		}
+		else{
+			MessageBox.Show("engineFilePath variable has been set to an invalid value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}	
 
-
-		bool isPythonPresent;
-		bool retry;
 		int lastExitCode;
 
-
-
-		Process p = System.Diagnostics.Process.Start("python", "--version");
-		p.WaitForExit(); // Check if Python is present
-		if (p.ExitCode != 0) {
-			isPythonPresent = false;
-		} 
-		else {
-			isPythonPresent = true;
+		try{
+			Process process = System.Diagnostics.Process.Start(engineProcessName[0], engineProcessName[1]);
+			process.WaitForExit();
+			lastExitCode = process.ExitCode;
 		}
-
-		try {
-			Process p2 = System.Diagnostics.Process.Start(exeFilePath);
-			p2.WaitForExit(); // Start the executable and wait for it to finish.
-			lastExitCode = p2.ExitCode;
-		} 
-		catch (System.Exception e){
-			MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-			return;	
+		catch (System.Exception error){
+			MessageBox.Show("An error occurred while attempting to launch \"" + engineFilePath + "\"! \n\nError: " + error.Message, "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return;
+		}	
+	
+		string default_text = "[Default Text]";
+		string[] errlog = new string[2];
+		errlog[0] = default_text;
+		
+		try{		
+			errlog = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
+			if (errlog.Length == 0){
+				errlog[0] = default_text;
+			}	
 		}
-		//Error handling/avoidance
-
-		string[] errlog = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
-
-		retry = bool.Parse(errlog[2]);
+		catch{
+		
+		}
+		
 		if (lastExitCode != 0) {
-			if (isPythonPresent && retry) {
-				try{
-					System.Diagnostics.Process.Start("python", pyFilePath).WaitForExit(); // Start the Python script instead and wait for it to finish.
-				}
-				catch (System.Exception e){
-					MessageBox.Show("An error occurred while attempting to launch the script! \n\nError: " + e.Message + "\n\nDetails: \n" + errlog[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-			} 
-			else {
-				MessageBox.Show("An error occurred during execution of the script:\n" + errlog[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
+			MessageBox.Show("An error occurred during execution of \"" + engineFilePath + "\":\n" + errlog[0], "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return;
 		}
+		
+		
 		string[] arrTimeCodesSource = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\timestamps.txt"));
+		//string[] arrTimeCodesSource = {"1,1,1", "1,2,1"};	
+
 		
 		if (arrTimeCodesSource.Length == 0){
 			MessageBox.Show("No timecodes found in timestamps.txt!", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
