@@ -1,5 +1,5 @@
 //YTPMVE
-//20220528
+//20220924
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -87,6 +87,7 @@ public class EntryPoint{
 		
 		bool timestampsContainsNulls = false;
 		bool tracksMissing = false;
+		bool foundFirstEvent = false;
 			
 		
 		//This region of the code is now much stricter about what data is allowed into the second array. You can put lots of random crap in timestamps.txt now and it will still mostly work.
@@ -126,12 +127,15 @@ public class EntryPoint{
 			for (int i = 0; i < currentVegasApp.Project.Tracks.Count; i++){
 				try{
 					sourceEvents.Add(currentVegasApp.Project.Tracks[i].Events[0]); //Append to an array of source events.
+					if (foundFirstEvent == false){
+						currentEvent = currentVegasApp.Project.Tracks[i].Events[0];
+						foundFirstEvent = true;
+					}	
 				}
 				catch{
 					//Don't add source events which do not exist.
 				}
 			}
-			currentEvent = currentVegasApp.Project.Tracks[0].Events[0];
 		}	
 		catch{
 			MessageBox.Show("No events exist in the timeline.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
