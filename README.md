@@ -30,7 +30,7 @@ YTPMVE requires the following to run:
 
 ## Usage
 
-**Support for multitrack MIDI has recently been added.** There are still a couple of kinks, so try discarding unnecessary channels from your MIDI file if it's being troublesome.
+**Auto-flipping has just been added! In order to configure video flipping or to disable it, change the boolean variables "flip_x" and "flip_y" in Run Script.cs. Later, a config file will be added to make this easier.** 
 
 Open Vegas Pro and create the same number of tracks as your MIDI file uses (if unsure, create 16), and place an event on each track that corresponds to the content of the MIDI channel you want synchronized with video. Be sure the timeline is entirely clear with the exception of those singular events. 
 The events will be duplicated along the timeline so that they are in sync with the song. If, for example, you place a video clip on track 1, it will be copied
@@ -42,7 +42,7 @@ synchronize your video clip to the song.
 In special situations, some notes may result in indeterminate clip durations. When this happens, you'll get a warning and markers will be added at such points in the
 timeline. 
 
-If you get an error message saying "No timecodes found in timestamps.txt!", you may be able to fix it by removing some tracks from your MIDI file and trying again.
+If you get an error message saying "No timecodes found in timestamps.txt!", you may be able to fix it by removing some channels from your MIDI file and trying again.
 
 Note: YTPMVE does **not** pitch shift audio samples automatically. This would be a pointless feature since it's already standard in digital audio workstations.
 [Learn how to generate the audio for a YTPMV](https://youtu.be/RP8MKrwXYKI).
