@@ -1,5 +1,0 @@
-flip_x=true
-flip_y=false
-pitch_shift_audio=false
-factor_event_grouping=true
-channel_mode=0
