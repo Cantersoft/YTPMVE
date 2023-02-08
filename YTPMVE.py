@@ -76,13 +76,13 @@ for msg in MIDI_file:                                                           
     else:
         current_time=float(msg.time)+current_time
         MIDI_time.append(current_time)
-        if msg.type == "note_on":                                                   # End of note
+        if msg.type == "note_on" and msg.velocity != 0:                             # End of note
 
             note_channels.append(msg.channel)
             note_starts.append([current_time, msg.note])
             note_durations.append("NULL")                                           # We must have a 1:1 ratio of note_offs for note_ons. This will create a space in note_durations which will be filled later.
 
-        elif msg.type == "note_off":                                                # Start of note
+        elif msg.type == "note_off" or msg.velocity == 0:                           # Start of note
 
             #note_durations.append(msg.time)
 
