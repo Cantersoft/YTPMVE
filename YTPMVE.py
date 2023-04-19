@@ -1,5 +1,5 @@
 #YTPMVE
-#20220528
+#20230418
 
 import os, sys, subprocess
 from os import path
@@ -69,28 +69,33 @@ note_durations=[]   # All note durations (seconds)
 
 print("Processing MIDI file.")
 
-for msg in MIDI_file:                                                               # Change this so that we don't look at the if statement except the first few times
-    if msg.is_meta:
-        start=start+1
-        continue
-    else:
-        current_time=float(msg.time)+current_time
-        MIDI_time.append(current_time)
-        if msg.type == "note_on" and msg.velocity != 0:                             # End of note
+try:
+    for msg in MIDI_file:                                                               # Change this so that we don't look at the if statement except the first few times
+        if msg.is_meta:
+            start=start+1
+            continue
+        elif msg.type != "note_on" and msg.type != "note_off":                          # Control changes and pitchwheels really throw this script off.
+            continue    
+        else:
+            current_time=float(msg.time)+current_time
+            MIDI_time.append(current_time)
+            if msg.type == "note_on" and msg.velocity != 0:                             # End of note
 
-            note_channels.append(msg.channel)
-            note_starts.append([current_time, msg.note])
-            note_durations.append("NULL")                                           # We must have a 1:1 ratio of note_offs for note_ons. This will create a space in note_durations which will be filled later.
+                note_channels.append(msg.channel)
+                note_starts.append([current_time, msg.note])
+                note_durations.append("NULL")                                           # We must have a 1:1 ratio of note_offs for note_ons. This will create a space in note_durations which will be filled later.
 
-        elif msg.type == "note_off" or msg.velocity == 0:                           # Start of note
+            elif msg.type == "note_off" or msg.velocity == 0:                           # Start of note
 
-            #note_durations.append(msg.time)
+                #note_durations.append(msg.time)
 
-            for i in range(len(note_starts)-1, -1, -1):                             # Reverse search the note starts list and find the note_on message that was probably linked to this note_off
-                if note_starts[i][1]==msg.note and note_channels[i]==msg.channel:   # Matching note found
-                    list_match=i
-                    note_durations[list_match]=current_time-note_starts[i][0]
-                    break
+                for i in range(len(note_starts)-1, -1, -1):                             # Reverse search the note starts list and find the note_on message that was probably linked to this note_off
+                    if note_starts[i][1]==msg.note and note_channels[i]==msg.channel:   # Matching note found
+                        list_match=i
+                        note_durations[list_match]=current_time-note_starts[i][0]
+                        break
+except Exception as error:
+    exitScript(str(error)+". MIDI processing failed.", 1)
 
 print("Writing data.")
         

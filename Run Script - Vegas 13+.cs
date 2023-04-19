@@ -1,5 +1,5 @@
 //YTPMVE
-//20221219
+//20230418
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -53,10 +53,11 @@ public class EntryPoint{
 			errlog = System.IO.File.ReadAllLines(Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\errlog.txt"));
 			if (errlog.Length == 0){
 				errlog[0] = default_text;
-			}	
+			}
 		}
 		catch{
-		
+			MessageBox.Show("Could not read error log.", "Error" , MessageBoxButtons.OK, MessageBoxIcon.Error);
+			return;
 		}
 		
 		if (lastExitCode != 0) {
