@@ -1,6 +1,6 @@
 # YTPMVE
 
-YTPMidiVideoEditor (YTPMVE) is a collection of scripts that synchronizes clips with music automatically, using MIDI. Currently, this software is designed and provided only as a Vegas Pro extension, although its functionality may be expanded in the future to make it more accessible.
+YTPMidiVideoExtension (YTPMVE) is a scripting tool that synchronizes clips to music automatically, using MIDI. Currently, this software is designed and provided only as a Vegas Pro extension, although its functionality may be expanded in the future to make it more accessible.
 
 
 ## Dependencies
