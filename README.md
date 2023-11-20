@@ -20,8 +20,8 @@ YTPMVE requires the following to run:
 	
 	or
 	* Copy `YTPME.cs` to Vegas Pro's Script Menu folder, which is located at `C:\Program Files\VEGAS\VEGAS Pro XX.0\Script Menu`.
-		* If you are using Vegas Pro version 12 or earlier, open `YTPME.cs` and change the namespace `ScriptPortal.Vegas` to `Sony.Vegas`
-	* Copy `YTPMVE.py` and `YTPMVE.exe` to `C:\Program Files\VEGAS\YTPMVE`
+		* If you are using Vegas Pro version 12 or earlier, then in `YTPMVE.cs`, change the namespace `ScriptPortal.Vegas` to `Sony.Vegas`.
+	* Copy `YTPMVE.py` and `YTPMVE.exe` to `C:\Program Files\VEGAS\YTPMVE\`.
 
 ## Usage
 
@@ -36,11 +36,14 @@ timeline.
 
 If the clip generation fails or results in a high number of errors, try removing unnecessary channels and especially long notes from your MIDI file.
 
-* Video flipping
+## Engine Configuration
+By default, YTPMVE uses a compiled executable as its engine. In order to run YTPMVE's engine as its Python source code, change the variable `engineFilePath` in YTPMVE.cs
 
-In order to configure video flipping or to disable it, change the boolean variables "flip_x" and "flip_y" in Run Script.cs.
+## Video Flipping
 
-* Pitch Shifting
+In order to configure video flipping or to disable it, change the boolean variables "flip_x" and "flip_y" in `YTPMVE.cs`.
+
+## Pitch Shifting
 
 YTPMVE pitch shifts audio samples automatically, but note that Vegas Pro is not a Digital Audio Workstation (DAW). For more realistic and better-sounding YTPMV audio, see the FL Studio tutorial below.
 [Learn how to generate YTPMV audio](https://youtu.be/RP8MKrwXYKI).
