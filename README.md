@@ -36,11 +36,11 @@ timeline.
 
 If the clip generation fails or results in a high number of errors, try removing unnecessary channels and especially long notes from your MIDI file.
 
-###Video flipping
+* Video flipping
 
 In order to configure video flipping or to disable it, change the boolean variables "flip_x" and "flip_y" in Run Script.cs.
 
-###Pitch Shifting
+* Pitch Shifting
 
 YTPMVE pitch shifts audio samples automatically, but note that Vegas Pro is not a Digital Audio Workstation (DAW). For more realistic and better-sounding YTPMV audio, see the FL Studio tutorial below.
 [Learn how to generate YTPMV audio](https://youtu.be/RP8MKrwXYKI).
