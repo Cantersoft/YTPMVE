@@ -34,8 +34,17 @@ set /p vegasversion=
 SET "var="&for /f "delims=0123456789" %%i in ("%vegasversion%") do set var=%%i
 if defined var (echo %vegasversion% is not a number! && pause && exit) else (echo Version: %vegasversion%)
 
-rmdir /s /q "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE"
-mkdir "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE"
-xcopy *.* "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE"
+echo Y | xcopy YTPMVE.cs "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\"
+
+REM --> Modify YTPMVE.cs if Vegas is a version using the Sony namespace.
+if %vegasversion% LSS 13 (
+	FindAndReplace.vbs "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE.cs" "using ScriptPortal.Vegas;" "using Sony.Vegas;"
+)
+
+rmdir /s /q "%ProgramFiles%\VEGAS\YTPMVE"
+mkdir "%ProgramFiles%\VEGAS\YTPMVE"
+
+echo Y | xcopy YTPMVE.py "%ProgramFiles%\VEGAS\YTPMVE\"
+echo Y | xcopy YTPMVE.exe "%ProgramFiles%\VEGAS\YTPMVE\"
 echo Done! If Vegas was open, please rescan the script menu folder.
 pause

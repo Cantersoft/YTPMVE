@@ -1,5 +1,5 @@
 //YTPMVE
-//20230418
+//20231119
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -11,13 +11,13 @@ public class EntryPoint{
     Vegas currentVegasApp;
 	public void FromVegas(Vegas vegas){
 		
-		string path = vegas.InstallationDirectory + "\\Script Menu\\YTPMVE\\";//Full path to all scripts and files included with the installation of YTPMVE.
+		string path = vegas.InstallationDirectory + "\\.." + "\\YTPMVE\\";//Full path to engine files included with the installation of YTPMVE.
 		string pyFilePath = "\"" + path + "YTPMVE.py" + "\"";
 		string exeFilePath = "\"" + path + "YTPMVE.exe" + "\"";
 		
 		
 		/*CHANGE THIS LINE TO CONTROL WHETHER THE EXECUTABLE OR PYTHON VERSION IS USED*/
-		string engineFilePath = exeFilePath; 
+		string engineFilePath = pyFilePath; 
 		/*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 		
 		
@@ -77,14 +77,15 @@ public class EntryPoint{
 
 		
 		currentVegasApp = vegas;
+		List<int[]> arrTrackIndex = new List<int[]>();
 		TrackEvent currentEvent;
+		TrackEvent copiedEvent;
 		List<TrackEvent> sourceEvents = new List<TrackEvent>();
 		
 		List<String> arrTimeCodes = new List<String>();
 		//HashSet<int> missingTrackIndices = new HashSet<int>();
 
 		String strDefaultEventDuration = "0.1";
-		String strCurrentEventStart = "0";
 		
 		bool timestampsContainsNulls = false;
 		bool tracksMissing = false;
@@ -105,15 +106,16 @@ public class EntryPoint{
 				}
 				
 				string[] current_note = arrTimeCodesSource[i].Split(',');		
-
-				//Assure indices 0 and 1 are numerical. We don't worry about the third value cause it might be NULL.
-				Double.Parse(current_note[0]);
-				Double.Parse(current_note[1]);
 				
-				if (current_note[2] == "NULL"){
-					arrTimeCodes.Add(strCurrentEventStart + "," + strDefaultEventDuration);
+				int note_track = Int32.Parse(current_note[0]);//Channel
+				int note_tone = Int32.Parse(current_note[1]);//Semitone offset
+				double note_start = Double.Parse(current_note[2]);//Start time
+				var note_duration = current_note[3];//Duration	| We don't validate this fourth value, because it might be NULL.
+				
+				if (note_duration == "NULL"){
+					arrTimeCodes.Add(note_track + "," + note_tone + "," + note_start + "," + strDefaultEventDuration);
 
-					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(Double.Parse(current_note[1])), "NULL DURATION"));
+					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(Double.Parse(current_note[2])), "NULL DURATION"));
 					timestampsContainsNulls = true;
 				}
 				else{
@@ -121,9 +123,20 @@ public class EntryPoint{
 				}
 			}
 			catch{
-				//Ignore invalid data
+				//Ignore invalid data //Hey, maybe add an "errorMessage" bool and make this an error message option?
 			}			
 		}
+		
+
+        string filePath = Environment.ExpandEnvironmentVariables(@"%USERPROFILE%\AppData\Local\Temp\YTPMVE\timecodes.txt");
+        using (StreamWriter writer = new StreamWriter(filePath)){
+            foreach (string item in arrTimeCodes){
+                writer.WriteLine(item);
+            }
+        }
+		
+
+        Console.WriteLine("Array contents dumped to the file successfully!");
 
 		if(timestampsContainsNulls){
 			MessageBox.Show("Some notes were overlapping or invalid, and thus their durations could not be determined. Markers have been added at such positions in the timeline.", "Warning" , MessageBoxButtons.OK, MessageBoxIcon.Warning);		
@@ -131,10 +144,29 @@ public class EntryPoint{
 			
 		try{
 			for (int i = 0; i < currentVegasApp.Project.Tracks.Count; i++){
+				
+				if (currentVegasApp.Project.Tracks[i].IsVideo()){
+					arrTrackIndex.Add(new int[] {i, 0});//Add video tracks to the array index, so that the script can send timestamp data to the correct video track.
+				}
+				else if (currentVegasApp.Project.Tracks[i].IsAudio()){
+					if (arrTrackIndex.Count > 0){
+						arrTrackIndex[arrTrackIndex.Count-1][1]++; //Increment value 2 in the last element in arrTrackIndex
+					}	
+					/*
+					for (j = arrTrackIndex.Count - 1; j >= 0; j--){
+						if (currentVegasApp.Project.Tracks[j].IsVideo()){
+							arrTrackIndex[j][1]++;
+							break;
+						}	
+						
+					}	
+					*/
+				}				
+				
 				try{
 					sourceEvents.Add(currentVegasApp.Project.Tracks[i].Events[0]); //Append to an array of source events.
 					if (foundFirstEvent == false){
-						currentEvent = currentVegasApp.Project.Tracks[i].Events[0];
+						currentEvent = currentVegasApp.Project.Tracks[i].Events[0]; //Set currentEvent to whichever event's track is the first to contain an event
 						foundFirstEvent = true;
 					}	
 				}
@@ -152,10 +184,25 @@ public class EntryPoint{
 		foreach (string j in arrTimeCodes){
 			string[] current_note = j.Split(',');//Parse "1,2" into {"1","2"}
 			
+			int note_track = Int32.Parse(current_note[0]);
+			int note_tone = Int32.Parse(current_note[1]);
+			string note_start = current_note[2];
+			string note_duration = current_note[3];
+			
 			try{
-				currentEvent = currentVegasApp.Project.Tracks[int.Parse(current_note[0])].Events[0];
-				var copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[int.Parse(current_note[0])], Timecode.FromPositionString(current_note[1], RulerFormat.Seconds));
-				copiedEvent.AdjustStartLength(Timecode.FromPositionString(current_note[1], RulerFormat.Seconds), Timecode.FromPositionString(current_note[2], RulerFormat.Seconds), false);					
+				//MessageBox.Show((arrTrackIndex[note_track][0]).ToString(), "Warning" , MessageBoxButtons.OK, MessageBoxIcon.Warning);//DEBUG
+				
+				currentEvent = currentVegasApp.Project.Tracks[(arrTrackIndex[note_track][0])].Events[0];//Set the current event to the first event on the track with arrTrackIndex's index of the timestamp's channel 
+				copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[(arrTrackIndex[note_track][0])], Timecode.FromPositionString(note_start, RulerFormat.Seconds));
+				copiedEvent.AdjustStartLength(Timecode.FromPositionString(note_start, RulerFormat.Seconds), Timecode.FromPositionString(note_duration, RulerFormat.Seconds), false);
+
+				for (int k = 1; k <= arrTrackIndex[note_track][1]; k++){
+					currentEvent = currentVegasApp.Project.Tracks[(arrTrackIndex[note_track][0]) + k].Events[0];
+					copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[(arrTrackIndex[note_track][0]) + k], Timecode.FromPositionString(note_start, RulerFormat.Seconds));
+					copiedEvent.AdjustStartLength(Timecode.FromPositionString(note_start, RulerFormat.Seconds), Timecode.FromPositionString(note_duration, RulerFormat.Seconds), false);
+					AudioEvent current_audio_event = (AudioEvent)copiedEvent;
+					current_audio_event.PitchSemis += note_tone;
+				}	
 			}
 			catch{
 				//missingTrackIndices.Add(int.Parse(current_note[0]));//remove duplicates
@@ -165,6 +212,7 @@ public class EntryPoint{
 		
 		//missingTrackIndices = missingTrackIndices.Distinct().ToList();
 		
+		//Delete the source events, now that the clips have been synchronized.
 		for (int i = 0; i < sourceEvents.Count; i++){
 			currentVegasApp.Project.Tracks[sourceEvents[i].Track.Index].Events.Remove(sourceEvents[i]);
 		}
@@ -172,29 +220,31 @@ public class EntryPoint{
 		
 		//SelectEveryOtherEvent.cs + sykhro auto flips || In this second loop, all other effects would be applied.	
         foreach (Track track in currentVegasApp.Project.Tracks){
-            bool selectThisEvent = false;
-            foreach (VideoEvent currentVideoEvent in track.Events){
-                if (selectThisEvent){
-                    currentVideoEvent.Selected = true;
-					
-					// Assign video vertexes to keyframes
-					VideoMotionVertex tl = currentVideoEvent.VideoMotion.Keyframes[0].TopLeft;
-					VideoMotionVertex tr = currentVideoEvent.VideoMotion.Keyframes[0].TopRight;
-					VideoMotionVertex bl = currentVideoEvent.VideoMotion.Keyframes[0].BottomLeft;
-					VideoMotionVertex br = currentVideoEvent.VideoMotion.Keyframes[0].BottomRight;
-					
-					if(flip_x){					
-						// Re-bound them, in order to produce a horizontal flip.
-						currentVideoEvent.VideoMotion.Keyframes[0].Bounds = new VideoMotionBounds(tr, tl, bl, br);
+			if (track.IsVideo()){
+				bool selectThisEvent = false;
+				foreach (VideoEvent currentVideoEvent in track.Events){
+					if (selectThisEvent){
+						currentVideoEvent.Selected = true;
+						
+						// Assign video vertexes to keyframes
+						VideoMotionVertex tl = currentVideoEvent.VideoMotion.Keyframes[0].TopLeft;
+						VideoMotionVertex tr = currentVideoEvent.VideoMotion.Keyframes[0].TopRight;
+						VideoMotionVertex bl = currentVideoEvent.VideoMotion.Keyframes[0].BottomLeft;
+						VideoMotionVertex br = currentVideoEvent.VideoMotion.Keyframes[0].BottomRight;
+						
+						if(flip_x){					
+							// Re-bound them, in order to produce a horizontal flip.
+							currentVideoEvent.VideoMotion.Keyframes[0].Bounds = new VideoMotionBounds(tr, tl, bl, br);
+						}
+						
+						if(flip_y){
+							// Re-bound them, in order to produce a vertical flip.
+							currentVideoEvent.VideoMotion.Keyframes[0].Bounds = new VideoMotionBounds(bl, br, tr, tl);
+						}					
 					}
-					
-					if(flip_y){
-						// Re-bound them, in order to produce a vertical flip.
-						currentVideoEvent.VideoMotion.Keyframes[0].Bounds = new VideoMotionBounds(bl, br, tr, tl);
-					}					
-                }
-                selectThisEvent = !selectThisEvent;
-            }
+					selectThisEvent = !selectThisEvent;
+				}
+			}	
         }
 
 		

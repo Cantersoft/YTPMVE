@@ -1,6 +1,6 @@
 # YTPMVE
 
-YTPMidiVideoExtension (YTPMVE) is a scripting tool that synchronizes clips to music automatically, using MIDI. Currently, this software is designed and provided only as a Vegas Pro extension, although its functionality may be expanded in the future to make it more accessible.
+YTPMidiVideoExtension (YTPMVE) is a scripting tool that synchronizes clips to music automatically, using MIDI files. Currently, this software is designed and provided only as a Vegas Pro extension, although its functionality may be expanded in the future to make it more accessible.
 
 
 ## Dependencies
@@ -14,35 +14,33 @@ YTPMVE requires the following to run:
 
 1. Download a [release](https://github.com/Cantersoft/YTPMVE/releases) (the *.zip in the "Assets" dropdown).
 2. (optional) Install Python and its dependencies as administrator and make sure they're on your system PATH.
-<!---
-3. Enter the YTPMVE folder, and
-
-	a. if you use Vegas Pro 14 or higher, delete `Run Script - Vegas 13.cs`.
-	
-	b. if you use Vegas Pro 13 or lower, delete `Run Script.cs`.
----> 
 3. Either:
 	
 	* Use the `install.bat` script, which requires administrator privileges to copy to folders inside Program Files, like the Script Menu folder.
 	
 	or
-	* Copy the entire YTPMVE folder from the zip file and paste it into Vegas Pro's Script Menu folder, which is located at `C:\Program Files\VEGAS\VEGAS Pro XX.0\Script Menu`.
+	* Copy `YTPME.cs` to Vegas Pro's Script Menu folder, which is located at `C:\Program Files\VEGAS\VEGAS Pro XX.0\Script Menu`.
+		* If you are using Vegas Pro version 12 or earlier, open `YTPME.cs` and change the namespace `ScriptPortal.Vegas` to `Sony.Vegas`
+	* Copy `YTPMVE.py` and `YTPMVE.exe` to `C:\Program Files\VEGAS\YTPMVE`
 
 ## Usage
 
-**Auto-flipping has just been added! In order to configure video flipping or to disable it, change the boolean variables "flip_x" and "flip_y" in Run Script.cs. Later, a config file will be added to make this easier.** 
+Open Vegas Pro, and create 16 video tracks. Place a video event on each track that corresponds by index to the MIDI channel whose content you wish the video event to be synchronized with. Each audio track will be associated with the first video track that precedes it, so if your video has audio, do not move the audio track it occupies above the track containing the video it is associated with. Be sure the timeline is entirely clear with the exception of these events. 
+The events will be duplicated along the timeline so that they are synchronized with the song. If, for example, you place a video clip on video track 1, it will be copied
+along to the contents of channel 0 in the MIDI file. If you place a clip on video track 2, it will be copied to the contents of channel 1.
 
-Open Vegas Pro and create the same number of tracks as your MIDI file uses (if unsure, create 16), and place an event on each track that corresponds to the content of the MIDI channel you want synchronized with video. Be sure the timeline is entirely clear with the exception of those singular events. 
-The events will be duplicated along the timeline so that they are in sync with the song. If, for example, you place a video clip on track 1, it will be copied
-along to the contents of channel 0 in the MIDI file. If you place a clip on track 2, it will be copied to the contents of channel 1.
-
-Click Tools > Scripting > YTPMVE > `Run Script - Vegas 13+` / `Run Script - Vegas 1-12`, and then select the MIDI file from earlier steps. YTPMVE will then automatically 
-synchronize your video clip to the song.
+Click Tools > Scripting > `YTPMVE`, and then select the MIDI file from earlier steps. YTPMVE will then automatically synchronize your video clip to the song.
 
 In special situations, some notes may result in indeterminate clip durations. When this happens, you'll get a warning and markers will be added at such points in the
 timeline. 
 
-If you get an error message saying "No timecodes found in timestamps.txt!", you may be able to fix it by removing some channels from your MIDI file and trying again.
+If the clip generation fails or results in a high number of errors, try removing unnecessary channels and especially long notes from your MIDI file.
 
-Note: YTPMVE does **not** pitch shift audio samples automatically. This would be a pointless feature since it's already standard in digital audio workstations.
-[Learn how to generate the audio for a YTPMV](https://youtu.be/RP8MKrwXYKI).
+###Video flipping
+
+In order to configure video flipping or to disable it, change the boolean variables "flip_x" and "flip_y" in Run Script.cs.
+
+###Pitch Shifting
+
+YTPMVE pitch shifts audio samples automatically, but note that Vegas Pro is not a Digital Audio Workstation (DAW). For more realistic and better-sounding YTPMV audio, see the FL Studio tutorial below.
+[Learn how to generate YTPMV audio](https://youtu.be/RP8MKrwXYKI).
