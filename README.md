@@ -39,5 +39,7 @@ By default, YTPMVE uses a compiled executable as its engine. In order to run YTP
 In order to configure video flipping or to disable it, change the boolean variables "flip_x" and "flip_y" in `YTPMVE.cs`.
 
 ## Pitch Shifting
-YTPMVE pitch shifts audio samples automatically, but note that Vegas Pro is not a Digital Audio Workstation (DAW). For more realistic and better-sounding YTPMV audio, see the FL Studio tutorial below.
+YTPMVE pitch shifts audio events automatically. To keep all source audio events in the same key, it is recommended to tune each of them to A4 (440Hz) prior to running the script. This can be performed by configuring the `Pitch Change` value in the `Properties` menu of any audio event.
+
+Note that Vegas Pro is not a Digital Audio Workstation (DAW). For more realistic and better-sounding YTPMV audio, see the following FL Studio tutorial.
 [Learn how to generate YTPMV audio](https://youtu.be/RP8MKrwXYKI).
