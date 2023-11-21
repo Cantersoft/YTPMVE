@@ -17,7 +17,7 @@ public class EntryPoint{
 		
 		
 		/*CHANGE THIS LINE TO CONTROL WHETHER THE EXECUTABLE OR PYTHON VERSION IS USED*/
-		string engineFilePath = pyFilePath; 
+		string engineFilePath = exeFilePath; 
 		/*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 		
 		
