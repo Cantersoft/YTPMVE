@@ -1,5 +1,5 @@
 #YTPMVE
-#20230418
+#20231121
 
 import os, sys, subprocess
 from os import path
@@ -74,13 +74,13 @@ print("Processing MIDI file.")
 
 try:
 	for msg in MIDI_file:															   # Change this so that we don't look at the if statement except the first few times
+		current_time=float(msg.time)+current_time
 		if msg.is_meta:
 			start=start+1
 			continue
 		elif msg.type != "note_on" and msg.type != "note_off":						  # Control changes and pitchwheels really throw this script off.
 			continue	
 		else:
-			current_time=float(msg.time)+current_time
 			MIDI_time.append(current_time)
 			if msg.type == "note_on" and msg.velocity != 0:							 # End of note
 
@@ -94,7 +94,7 @@ try:
 				#note_durations.append(msg.time)
 
 				for i in range(len(note_starts)-1, -1, -1):							 # Reverse search the note starts list and find the note_on message that was probably linked to this note_off
-					if note_tones[i]==msg.note and note_channels[i]==msg.channel:	# Matching note found
+					if  note_channels[i]==msg.channel and note_tones[i]==msg.note and current_time-note_starts[i]!=0:	# Matching note found
 						list_match=i
 						note_durations[list_match]=current_time-note_starts[i]
 						break
