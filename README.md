@@ -33,7 +33,7 @@ timeline.
 If the clip generation fails or results in a high number of errors, try removing unnecessary channels and especially long notes from your MIDI file.
 
 ## Engine Configuration
-By default, YTPMVE uses a compiled executable as its engine. In order to run YTPMVE's engine as its Python source code, change the variable `engineFilePath` in YTPMVE.cs.
+By default, YTPMVE uses a compiled executable as its engine. In order to run YTPMVE's engine as its Python source code, change the variable `engineFilePath` in `YTPMVE.cs`.
 
 ## Video Flipping
 In order to configure video flipping or to disable it, change the boolean variables "flip_x" and "flip_y" in `YTPMVE.cs`.
