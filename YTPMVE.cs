@@ -200,8 +200,10 @@ public class EntryPoint{
 					currentEvent = currentVegasApp.Project.Tracks[(arrTrackIndex[note_track][0]) + k].Events[0];
 					copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[(arrTrackIndex[note_track][0]) + k], Timecode.FromPositionString(note_start, RulerFormat.Seconds));
 					copiedEvent.AdjustStartLength(Timecode.FromPositionString(note_start, RulerFormat.Seconds), Timecode.FromPositionString(note_duration, RulerFormat.Seconds), false);
+                    /*PitchSemis NOT SUPPORTED IN VEGAS 14*/
 					AudioEvent current_audio_event = (AudioEvent)copiedEvent;
 					current_audio_event.PitchSemis += note_tone;
+                    /*END PitchSemis NOT SUPPORTED IN VEGAS 14*/
 				}	
 			}
 			catch{
