@@ -108,14 +108,14 @@ public class EntryPoint{
 				string[] current_note = arrTimeCodesSource[i].Split(',');		
 				
 				int note_track = Int32.Parse(current_note[0]);//Channel
-				int note_tone = Int32.Parse(current_note[1]);//Semitone offset
+				int note_tone_offset = Int32.Parse(current_note[1]);//Semitone offset
 				double note_start = Double.Parse(current_note[2]);//Start time
 				var note_duration = current_note[3];//Duration	| We don't validate this fourth value, because it might be NULL.
 				
 				if (note_duration == "NULL"){
-					arrTimeCodes.Add(note_track + "," + note_tone + "," + note_start + "," + strDefaultEventDuration);
+					arrTimeCodes.Add(note_track + "," + note_tone_offset + "," + note_start + "," + strDefaultEventDuration);
 
-					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(Double.Parse(current_note[2])), "NULL DURATION"));
+					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(note_start)), "NULL DURATION"));
 					timestampsContainsNulls = true;
 				}
 				else{
@@ -185,7 +185,7 @@ public class EntryPoint{
 			string[] current_note = j.Split(',');//Parse "1,2" into {"1","2"}
 			
 			int note_track = Int32.Parse(current_note[0]);
-			int note_tone = Int32.Parse(current_note[1]);
+			int note_tone_offset = Int32.Parse(current_note[1]);
 			string note_start = current_note[2];
 			string note_duration = current_note[3];
 			
@@ -201,8 +201,21 @@ public class EntryPoint{
 					copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[(arrTrackIndex[note_track][0]) + k], Timecode.FromPositionString(note_start, RulerFormat.Seconds));
 					copiedEvent.AdjustStartLength(Timecode.FromPositionString(note_start, RulerFormat.Seconds), Timecode.FromPositionString(note_duration, RulerFormat.Seconds), false);
                     /*PitchSemis NOT SUPPORTED IN VEGAS 14*/
-					AudioEvent current_audio_event = (AudioEvent)copiedEvent;
-					current_audio_event.PitchSemis += note_tone;
+                    AudioEvent current_audio_event = (AudioEvent)copiedEvent;
+                    
+                    double note_tone = current_audio_event.PitchSemis + note_tone_offset;
+                    
+                    //Stupidly, Vegas limits pitch within a range of 48 semitones. This logic will keep the note tones within the range.
+                    if (note_tone < -24 || note_tone > 24){
+                        while (note_tone > 24){
+                            note_tone -= 12;
+                        }
+                        while (note_tone < -24){
+                            note_tone += 12;
+                        }                    
+                    }  
+                    
+					current_audio_event.PitchSemis = note_tone;
                     /*END PitchSemis NOT SUPPORTED IN VEGAS 14*/
 				}	
 			}
