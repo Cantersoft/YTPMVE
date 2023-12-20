@@ -1,5 +1,5 @@
 //YTPMVE
-//20231119
+//20231223
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -115,7 +115,7 @@ public class EntryPoint{
 				if (note_duration == "NULL"){
 					arrTimeCodes.Add(note_track + "," + note_tone_offset + "," + note_start + "," + strDefaultEventDuration);
 
-					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(note_start)), "NULL DURATION"));
+					currentVegasApp.Project.Markers.Add(new Marker(Timecode.FromSeconds(note_start)), "NULL DURATION");
 					timestampsContainsNulls = true;
 				}
 				else{
