@@ -1,5 +1,5 @@
 //YTPMVE
-//20231220
+//20231223
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -80,7 +80,8 @@ public class EntryPoint{
 		List<int[]> arrTrackIndex = new List<int[]>();
 		TrackEvent currentEvent;
 		TrackEvent copiedEvent;
-		List<TrackEvent> sourceEvents = new List<TrackEvent>();
+		List<TrackEvent> source_events = new List<TrackEvent>();
+        List<TrackEvent> source_audio_events = new List<TrackEvent>();
 		
 		List<String> arrTimeCodes = new List<String>();
 		//HashSet<int> missingTrackIndices = new HashSet<int>();
@@ -89,7 +90,6 @@ public class EntryPoint{
 		
 		bool timestampsContainsNulls = false;
 		bool tracksMissing = false;
-		bool foundFirstEvent = false;
 		
 		//Options
 		
@@ -151,7 +151,8 @@ public class EntryPoint{
 				else if (currentVegasApp.Project.Tracks[i].IsAudio()){
 					if (arrTrackIndex.Count > 0){
 						arrTrackIndex[arrTrackIndex.Count-1][1]++; //Increment value 2 in the last element in arrTrackIndex
-					}	
+					}
+                    source_audio_events.Add(currentVegasApp.Project.Tracks[i].Events[0]); //Append to an array of source audio events.
 					/*
 					for (j = arrTrackIndex.Count - 1; j >= 0; j--){
 						if (currentVegasApp.Project.Tracks[j].IsVideo()){
@@ -164,11 +165,8 @@ public class EntryPoint{
 				}				
 				
 				try{
-					sourceEvents.Add(currentVegasApp.Project.Tracks[i].Events[0]); //Append to an array of source events.
-					if (foundFirstEvent == false){
-						currentEvent = currentVegasApp.Project.Tracks[i].Events[0]; //Set currentEvent to whichever event's track is the first to contain an event
-						foundFirstEvent = true;
-					}	
+                    currentEvent = currentVegasApp.Project.Tracks[i].Events[0];
+					source_events.Add(currentEvent); //Append to an array of source events.   
 				}
 				catch{
 					//Don't add source events which do not exist.
@@ -201,21 +199,22 @@ public class EntryPoint{
 					copiedEvent = currentEvent.Copy(currentVegasApp.Project.Tracks[(arrTrackIndex[note_track][0]) + k], Timecode.FromPositionString(note_start, RulerFormat.Seconds));
 					copiedEvent.AdjustStartLength(Timecode.FromPositionString(note_start, RulerFormat.Seconds), Timecode.FromPositionString(note_duration, RulerFormat.Seconds), false);
                     /*PitchSemis NOT SUPPORTED IN VEGAS 14*/
-                    AudioEvent current_audio_event = (AudioEvent)copiedEvent;
+                    AudioEvent copied_audio_event = (AudioEvent)copiedEvent;
+                    AudioEvent source_audio_event = (AudioEvent)source_audio_events[note_track];
                     
-                    double note_tone = current_audio_event.PitchSemis + note_tone_offset;
+                    double note_tone = source_audio_event.PitchSemis + note_tone_offset;
                     
-                    //Stupidly, Vegas limits pitch within a range of 48 semitones. This logic will keep the note tones within the range.
-                    if (note_tone < -24 || note_tone > 24){
-                        while (note_tone > 24){
+                    //Stupidly, Vegas internally limits pitch within a range of 78 semitones, beyond the UI limit of 48. This logic will keep the note tones within the range.
+                    if (note_tone < -39 || note_tone > 39){
+                        while (note_tone > 39){
                             note_tone -= 12;
                         }
-                        while (note_tone < -24){
+                        while (note_tone < -39){
                             note_tone += 12;
                         }                    
                     }  
                     
-					current_audio_event.PitchSemis = note_tone;
+					copied_audio_event.PitchSemis = note_tone;
                     /*END PitchSemis NOT SUPPORTED IN VEGAS 14*/
 				}	
 			}
@@ -228,8 +227,8 @@ public class EntryPoint{
 		//missingTrackIndices = missingTrackIndices.Distinct().ToList();
 		
 		//Delete the source events, now that the clips have been synchronized.
-		for (int i = 0; i < sourceEvents.Count; i++){
-			currentVegasApp.Project.Tracks[sourceEvents[i].Track.Index].Events.Remove(sourceEvents[i]);
+		for (int i = 0; i < source_events.Count; i++){
+			currentVegasApp.Project.Tracks[source_events[i].Track.Index].Events.Remove(source_events[i]);
 		}
 		
 		
