@@ -48,7 +48,7 @@ root.destroy()
 
 
 try:
-	MIDI_file=mido.MidiFile(MIDI_filename)
+	MIDI_file=mido.MidiFile(MIDI_filename, clip=True)
 except FileNotFoundError:
 	exitScript("No file selected!", 1)
 else:
