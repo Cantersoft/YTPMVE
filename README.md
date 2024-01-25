@@ -25,7 +25,7 @@ Open Vegas Pro, and create 16 video tracks. Place a video event on each track th
 The events will be duplicated along the timeline so that they are synchronized with the song. If, for example, you place a video clip on video track 1, it will be copied
 along to the contents of channel 0 in the MIDI file. If you place a clip on video track 2, it will be copied to the contents of channel 1.
 
-Click Tools > Scripting > `YTPMVE`, and then select the MIDI file from earlier steps. YTPMVE will then automatically synchronize your video clip to the song.
+Click Tools > Scripting > `YTPMVE`, and then select a MIDI file. YTPMVE will then automatically synchronize your video clips to the song.
 
 In special situations, some notes may result in indeterminate clip durations. When this happens, you'll get a warning and markers will be added at such points in the
 timeline. 
