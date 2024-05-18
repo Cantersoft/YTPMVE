@@ -33,7 +33,18 @@ set /p vegasversion= Enter the version number for your Vegas installation (e.g. 
 SET "var="&for /f "delims=0123456789" %%i in ("%vegasversion%") do set var=%%i
 if defined var (echo %vegasversion% is not a number! && pause && exit) else (echo Version: %vegasversion%)
 
-echo Y | xcopy YTPMVE.cs "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\"
+set scripts_installation_directory= "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE_VEGAS"
+set engine_installation_directory= "%ProgramFiles%\VEGAS\YTPMVE"
+
+rmdir /s /q %scripts_installation_directory%
+mkdir %scripts_installation_directory%
+
+rmdir /s /q %engine_installation_directory%
+mkdir %engine_installation_directory%
+
+echo Y | xcopy YTPMVE.cs %scripts_installation_directory%
+echo Y | xcopy YTPMVE.cs.config %scripts_installation_directory%
+echo Y | xcopy Newtonsoft.Json.dll %scripts_installation_directory%
 
 REM --> Modify YTPMVE.cs if Vegas is a version not supporting PitchSemis.
 REM --> Modify YTPMVE.cs if Vegas is a version using the Sony namespace.
@@ -42,19 +53,19 @@ if %vegasversion% LSS 15 (
     echo:
     echo Warning! PitchSemis not supported in Vegas %vegasversion%.
     echo:
-    FindAndReplace.vbs "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE.cs" "/*PitchSemis NOT SUPPORTED IN VEGAS 14*/" "/*"
-    FindAndReplace.vbs "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE.cs" "/*END PitchSemis NOT SUPPORTED IN VEGAS 14*/" "*/"      
+    FindAndReplace.vbs "%scripts_installation_directory%\YTPMVE.cs" "/*PitchSemis NOT SUPPORTED IN VEGAS 14*/" "/*"
+    FindAndReplace.vbs "%scripts_installation_directory%\YTPMVE.cs" "/*END PitchSemis NOT SUPPORTED IN VEGAS 14*/" "*/"      
 
     if %vegasversion% LSS 13 (
         echo Changing namespace to Sony.Vegas.
-        FindAndReplace.vbs "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE.cs" "using ScriptPortal.Vegas;" "using Sony.Vegas;"
+        FindAndReplace.vbs "%scripts_installation_directory%\YTPMVE.cs" "using ScriptPortal.Vegas;" "using Sony.Vegas;"
     )    
 )
 
-rmdir /s /q "%ProgramFiles%\VEGAS\YTPMVE"
-mkdir "%ProgramFiles%\VEGAS\YTPMVE"
 
-echo Y | xcopy YTPMVE.py "%ProgramFiles%\VEGAS\YTPMVE\"
-echo Y | xcopy YTPMVE.exe "%ProgramFiles%\VEGAS\YTPMVE\"
+echo Y | xcopy YTPMVE.py %engine_installation_directory%
+echo Y | xcopy YTPMVE_UI.py %engine_installation_directory%
+echo Y | xcopy hoof.ico %engine_installation_directory%
+echo Y | xcopy YTPMVE_UI.exe %engine_installation_directory%
 echo Done! If Vegas was open, please rescan the Script Menu.
 pause

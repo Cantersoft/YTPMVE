@@ -23,11 +23,11 @@ jobs:
         pip install -r requirements.txt
     - name: Build executable
       run: |
-        pyinstaller --onefile YTPMVE.py 
+        pyinstaller --onefile YTPMVE_UI.py 
     - uses: actions/upload-artifact@v2
       with:
         name: YTPMVE
-        path: ./dist/YTPMVE.exe
+        path: ./dist/YTPMVE_UI.exe
     - name: Create zip file for pre-release
       run: |
         move ./dist/YTPMVE.exe .

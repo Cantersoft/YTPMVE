@@ -1,5 +1,10 @@
-*.cs
-YTPMVE.py
+FindAndReplace.vbs
+hoof.ico
 install.bat
+Newtonsoft.Json.dll
 README.md
-YTPMVE.exe
+YTPMVE.cs
+YTPMVE.cs.config
+YTPMVE.py
+YTPMVE_UI.py
+YTPMVE_UI.exe
