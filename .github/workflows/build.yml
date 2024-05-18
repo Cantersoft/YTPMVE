@@ -2,9 +2,9 @@ name: Build executable
 
 on:
   push:
-    branches: [ master ]
+    branches: [ YTPMVE_UI_VEGAS ]
   pull_request:
-    branches: [ master ]
+    branches: [ YTPMVE_UI_VEGAS ]
 
 jobs:
   build:
