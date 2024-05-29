@@ -6,5 +6,5 @@ README.md
 YTPMVE.cs
 YTPMVE.cs.config
 YTPMVE.py
-YTPMVE_UI.py
+YTPMVE_UI.pyw
 YTPMVE_UI.exe

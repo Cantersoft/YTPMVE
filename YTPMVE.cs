@@ -240,7 +240,7 @@ public class EntryPoint
         this_application = vegas;
 
         string path = vegas.InstallationDirectory + "\\.." + "\\YTPMVE\\";//Full path to engine files included with the installation of YTPMVE.
-        string py_file_path = "\"" + path + "YTPMVE_UI.py" + "\"";
+        string py_file_path = "\"" + path + "YTPMVE_UI.pyw" + "\"";
         string exe_file_path = "\"" + path + "YTPMVE_UI.exe" + "\"";
 
 
