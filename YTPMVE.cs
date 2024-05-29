@@ -1,5 +1,5 @@
 //YTPMVE
-//20240512
+//20240528
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -97,23 +97,17 @@ public class EntryPoint
     }
 
     //Rebound keyframe bounds vertices for flipping
-    static void flip_keyframe_x(VideoMotionKeyframe current_video_motion_keyframe, VideoMotionVertex tl, VideoMotionVertex tr, VideoMotionVertex bl, VideoMotionVertex br)
+    static void flip_keyframe_x(VideoMotionKeyframe current_video_motion_keyframe)
     {
-        Double current_video_motion_keyframe_rotation = current_video_motion_keyframe.Rotation;
-        current_video_motion_keyframe.Bounds = new VideoMotionBounds(tr, tl, bl, br);
-        current_video_motion_keyframe.Rotation = current_video_motion_keyframe_rotation;
+        current_video_motion_keyframe.ScaleBy(new VideoMotionVertex(-1, 1));
     }
-    static void flip_keyframe_y(VideoMotionKeyframe current_video_motion_keyframe, VideoMotionVertex tl, VideoMotionVertex tr, VideoMotionVertex bl, VideoMotionVertex br)
+    static void flip_keyframe_y(VideoMotionKeyframe current_video_motion_keyframe)
     {
-        Double current_video_motion_keyframe_rotation = current_video_motion_keyframe.Rotation;
-        current_video_motion_keyframe.Bounds = new VideoMotionBounds(bl, br, tr, tl);
-        current_video_motion_keyframe.Rotation = current_video_motion_keyframe_rotation;
+        current_video_motion_keyframe.ScaleBy(new VideoMotionVertex(1, -1));
     }
-    static void flip_keyframe_xy(VideoMotionKeyframe current_video_motion_keyframe, VideoMotionVertex tl, VideoMotionVertex tr, VideoMotionVertex bl, VideoMotionVertex br)
+    static void flip_keyframe_xy(VideoMotionKeyframe current_video_motion_keyframe)
     {
-        Double current_video_motion_keyframe_rotation = current_video_motion_keyframe.Rotation;
-        current_video_motion_keyframe.Bounds = new VideoMotionBounds(br, bl, tl, tr);
-        current_video_motion_keyframe.Rotation = current_video_motion_keyframe_rotation;
+        current_video_motion_keyframe.ScaleBy(new VideoMotionVertex(-1, -1));
     }
 
     //SelectEveryOtherEvent.cs + sykhro auto flips
@@ -132,10 +126,6 @@ public class EntryPoint
 
                 // Assign video vertexes to keyframes.
                 VideoMotionKeyframe current_video_motion_keyframe = current_video_event.VideoMotion.Keyframes[0];
-                VideoMotionVertex tl = current_video_motion_keyframe.TopLeft;
-                VideoMotionVertex tr = current_video_motion_keyframe.TopRight;
-                VideoMotionVertex bl = current_video_motion_keyframe.BottomLeft;
-                VideoMotionVertex br = current_video_motion_keyframe.BottomRight;
 
                 if (flip_x && !flip_y)
                 {
@@ -144,11 +134,7 @@ public class EntryPoint
                         for (int j = 0; j < current_video_event.VideoMotion.Keyframes.Count; j++)
                         {
                             current_video_motion_keyframe = current_video_event.VideoMotion.Keyframes[j];
-                            tl = current_video_motion_keyframe.TopLeft;
-                            tr = current_video_motion_keyframe.TopRight;
-                            bl = current_video_motion_keyframe.BottomLeft;
-                            br = current_video_motion_keyframe.BottomRight;
-                            flip_keyframe_x(current_video_motion_keyframe, tl, tr, bl, br);
+                            flip_keyframe_x(current_video_motion_keyframe);
                         }
                     }
                     select_this_event = !select_this_event;
@@ -161,11 +147,7 @@ public class EntryPoint
                         for (int j = 0; j < current_video_event.VideoMotion.Keyframes.Count; j++)
                         {
                             current_video_motion_keyframe = current_video_event.VideoMotion.Keyframes[j];
-                            tl = current_video_motion_keyframe.TopLeft;
-                            tr = current_video_motion_keyframe.TopRight;
-                            bl = current_video_motion_keyframe.BottomLeft;
-                            br = current_video_motion_keyframe.BottomRight;
-                            flip_keyframe_y(current_video_motion_keyframe, tl, tr, bl, br);
+                            flip_keyframe_y(current_video_motion_keyframe);
                         }
                     }
                     select_this_event = !select_this_event;
@@ -176,23 +158,19 @@ public class EntryPoint
                     for (int j = 0; j < current_video_event.VideoMotion.Keyframes.Count; j++)
                     {
                         current_video_motion_keyframe = current_video_event.VideoMotion.Keyframes[j];
-                        tl = current_video_motion_keyframe.TopLeft;
-                        tr = current_video_motion_keyframe.TopRight;
-                        bl = current_video_motion_keyframe.BottomLeft;
-                        br = current_video_motion_keyframe.BottomRight;
                         // Rolling flips
                         switch (sequence_counter)
                         {
                             case 1:
                                 break;
                             case 2:
-                                flip_keyframe_x(current_video_motion_keyframe, tl, tr, bl, br);
+                                flip_keyframe_x(current_video_motion_keyframe);
                                 break;
                             case 3:
-                                flip_keyframe_y(current_video_motion_keyframe, tl, tr, bl, br);
+                                flip_keyframe_y(current_video_motion_keyframe);
                                 break;
                             case 4:
-                                flip_keyframe_xy(current_video_motion_keyframe, tl, tr, bl, br);
+                                flip_keyframe_xy(current_video_motion_keyframe);
                                 break;
                             default:
                                 break;
