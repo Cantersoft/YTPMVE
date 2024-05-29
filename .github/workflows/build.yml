@@ -30,7 +30,7 @@ jobs:
         path: ./dist/YTPMVE_UI.exe
     - name: Create zip file for pre-release
       run: |
-        move ./dist/YTPMVE.exe .
+        move ./dist/YTPMVE_UI.exe .
         mkdir YTPMVE
         Get-Content .\installfiles.txt | foreach { mv $_ .\YTPMVE}
         Compress-Archive .\YTPMVE YTPMVE-$(((get-date).ToUniversalTime()).ToString("yyyyMMdd-HHmmss")).zip
