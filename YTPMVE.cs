@@ -245,7 +245,7 @@ public class EntryPoint
 
 
         /*CHANGE THIS LINE TO CONTROL WHETHER THE EXECUTABLE OR PYTHON VERSION IS USED*/
-        string engine_file_path = py_file_path;
+        string engine_file_path = exe_file_path;
         /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
