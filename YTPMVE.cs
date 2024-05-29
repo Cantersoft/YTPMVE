@@ -1,5 +1,5 @@
 //YTPMVE
-//20240528
+//20240529
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -167,10 +167,10 @@ public class EntryPoint
                                 flip_keyframe_x(current_video_motion_keyframe);
                                 break;
                             case 3:
-                                flip_keyframe_y(current_video_motion_keyframe);
+                                flip_keyframe_xy(current_video_motion_keyframe);
                                 break;
                             case 4:
-                                flip_keyframe_xy(current_video_motion_keyframe);
+                                flip_keyframe_y(current_video_motion_keyframe);
                                 break;
                             default:
                                 break;
