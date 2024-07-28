@@ -35,6 +35,7 @@ if defined var (echo %vegasversion% is not a number! && pause && exit) else (ech
 
 set scripts_installation_directory= "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE_VEGAS"
 set engine_installation_directory= "%ProgramFiles%\VEGAS\YTPMVE"
+set YTPMVE_cs= "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE_VEGAS\YTPMVE.cs"
 
 rmdir /s /q %scripts_installation_directory%
 mkdir %scripts_installation_directory%
@@ -53,12 +54,12 @@ if %vegasversion% LSS 15 (
     echo:
     echo Warning! PitchSemis not supported in Vegas %vegasversion%.
     echo:
-    FindAndReplace.vbs "%scripts_installation_directory%\YTPMVE.cs" "/*PitchSemis NOT SUPPORTED IN VEGAS 14*/" "/*"
-    FindAndReplace.vbs "%scripts_installation_directory%\YTPMVE.cs" "/*END PitchSemis NOT SUPPORTED IN VEGAS 14*/" "*/"      
+    FindAndReplace.vbs %YTPMVE_cs% "/*PitchSemis NOT SUPPORTED IN VEGAS 14*/" "/*"
+    FindAndReplace.vbs %YTPMVE_cs% "/*END PitchSemis NOT SUPPORTED IN VEGAS 14*/" "*/"      
 
-    if %vegasversion% LSS 13 (
+    if %vegasversion% LSS 14 (
         echo Changing namespace to Sony.Vegas.
-        FindAndReplace.vbs "%scripts_installation_directory%\YTPMVE.cs" "using ScriptPortal.Vegas;" "using Sony.Vegas;"
+        FindAndReplace.vbs %YTPMVE_cs% "using ScriptPortal.Vegas;" "using Sony.Vegas;"
     )    
 )
 
