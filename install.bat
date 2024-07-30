@@ -50,7 +50,7 @@ echo Y | xcopy Newtonsoft.Json.dll %scripts_installation_directory%
 REM --> Modify YTPMVE.cs if Vegas is a version not supporting PitchSemis.
 REM --> Modify YTPMVE.cs if Vegas is a version using the Sony namespace.
 
-if %vegasversion% LSS 15 (
+if %vegasversion% LSS 16 (
     echo:
     echo Warning! PitchSemis not supported in Vegas %vegasversion%.
     echo:
