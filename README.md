@@ -9,17 +9,17 @@ YTPMVE requires the following to run:
 * Python 3 and mido (optional)
 
 ## Installation
-1. Download a [release](https://github.com/Cantersoft/YTPMVE/releases) (the *.zip in the "Assets" dropdown).
+1. Download a [release](https://github.com/Cantersoft/YTPMVE/releases) (in the "Assets" dropdown, the *.zip labeled "YTPMVE").
 2. (optional) Install Python and its dependencies as administrator and make sure they're on your system PATH.
 3. Either:
 	
 	* Use the `install.bat` script, which requires administrator privileges to copy to folders inside Program Files, like the Script Menu folder.
 	
 	or
-	* Copy `YTPMVE.cs`, Newtonsoft.Json.dll, and YTPMVE.cs.config to `C:\Program Files\VEGAS\VEGAS Pro XX.0\Script Menu`.
+	* Copy `YTPMVE.cs`, `Newtonsoft.Json.dll`, and `YTPMVE.cs.config` to `%ProgramFiles%\VEGAS\VEGAS Pro XX.0\Script Menu\YTPMVE_VEGAS`.
 		* If you are using Vegas Pro version 12 or earlier, then in `YTPMVE.cs`, change the namespace `ScriptPortal.Vegas` to `Sony.Vegas`.
 		* If you are using Vegas Pro version 15 or earlier, then in `YTPMVE.cs`, comment out the "PitchSemis NOT SUPPORTED IN VEGAS" region.
-	* Copy `YTPMVE.py`, `YTPMVE_UI.py`, `hoof.ico` and `YTPMVE_UI.exe` to `C:\Program Files\VEGAS\YTPMVE\`.
+	* Copy `hoof.ico`, `YTPMVE.py`, `YTPMVE_UI.exe`, and `YTPMVE_UI.pyw`  to `%ProgramFiles%\VEGAS\YTPMVE\`.
 
 ## Usage
 Open Vegas Pro, and place any number of clips on the timeline, each on separate tracks. For each audio clip, open `Properties` and use the `Pitch Change` value to tune it to A4.
