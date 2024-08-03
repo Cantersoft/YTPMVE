@@ -65,7 +65,7 @@ if %vegasversion% LSS 16 (
 
 
 echo Y | xcopy YTPMVE.py %engine_installation_directory%
-echo Y | xcopy YTPMVE_UI.py %engine_installation_directory%
+echo Y | xcopy YTPMVE_UI.pyw %engine_installation_directory%
 echo Y | xcopy hoof.ico %engine_installation_directory%
 echo Y | xcopy YTPMVE_UI.exe %engine_installation_directory%
 echo Done! If Vegas was open, please rescan the Script Menu.
