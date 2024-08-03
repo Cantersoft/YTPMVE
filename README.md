@@ -16,7 +16,7 @@ YTPMVE requires the following to run:
 	* Use the `install.bat` script, which requires administrator privileges to copy to folders inside Program Files, like the Script Menu folder.
 	
 	or
-	* Copy `YTPMVE.cs`, `Newtonsoft.Json.dll`, and `YTPMVE.cs.config` to `%ProgramFiles%\VEGAS\VEGAS Pro XX.0\Script Menu\YTPMVE_VEGAS`.
+	* Copy `Newtonsoft.Json.dll`, `YTPMVE.cs`, and `YTPMVE.cs.config` to `%ProgramFiles%\VEGAS\VEGAS Pro XX.0\Script Menu\YTPMVE_VEGAS`.
 		* If you are using Vegas Pro version 12 or earlier, then in `YTPMVE.cs`, change the namespace `ScriptPortal.Vegas` to `Sony.Vegas`.
 		* If you are using Vegas Pro version 15 or earlier, then in `YTPMVE.cs`, comment out the "PitchSemis NOT SUPPORTED IN VEGAS" region.
 	* Copy `hoof.ico`, `YTPMVE.py`, `YTPMVE_UI.exe`, and `YTPMVE_UI.pyw`  to `%ProgramFiles%\VEGAS\YTPMVE\`.
