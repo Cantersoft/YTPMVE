@@ -1,5 +1,5 @@
 //YTPMVE
-//20240529
+//20240913
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Newtonsoft.Json;
 using System.Collections;
+using System.Globalization;
 
 public class EntryPoint
 {
@@ -243,7 +244,6 @@ public class EntryPoint
         string py_file_path = "\"" + path + "YTPMVE_UI.pyw" + "\"";
         string exe_file_path = "\"" + path + "YTPMVE_UI.exe" + "\"";
 
-
         /*CHANGE THIS LINE TO CONTROL WHETHER THE EXECUTABLE OR PYTHON VERSION IS USED*/
         string engine_file_path = exe_file_path;
         /*^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -303,7 +303,7 @@ public class EntryPoint
         List<String> list_timecodes = new List<String>();
         //HashSet<int> missingTrackIndices = new HashSet<int>();
         int iterator = 0;
-        bool pitchsemis_supported = Double.Parse((vegas.Version).Split(' ')[1]) > 14;
+        bool pitchsemis_supported = Double.Parse((vegas.Version).Split(' ')[1], CultureInfo.InvariantCulture) > 14;
         string str_default_event_duration = "0.1";
         string default_text = "[Default Text]";
         string[] errlog = new string[2];
@@ -449,7 +449,7 @@ public class EntryPoint
         }
         catch
         {
-            MessageBox.Show("Timestamps file unreadable or not generated from MIDI!", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Timestamps file unreadable or inaccessible!", "Empty Array", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
@@ -474,9 +474,9 @@ public class EntryPoint
 
                 string[] current_note = array_timecodes_src[i].Split(',');
 
-                int note_channel = Int32.Parse(current_note[0]);//Channel
-                int note_tone_offset = Int32.Parse(current_note[1]);//Semitone offset
-                double note_start = Double.Parse(current_note[2]);//Start time
+                int note_channel = Int32.Parse(current_note[0], CultureInfo.InvariantCulture);//Channel
+                int note_tone_offset = Int32.Parse(current_note[1], CultureInfo.InvariantCulture);//Semitone offset
+                double note_start = Double.Parse(current_note[2], CultureInfo.InvariantCulture);//Start time
                 var note_duration = current_note[3];//Duration	| We don't validate this fourth value, because it might be NULL.
 
                 if (note_duration == "NULL")
@@ -512,8 +512,8 @@ public class EntryPoint
         {
             string[] current_note = j.Split(',');//Parse "1,2" into {"1","2"}
 
-            int note_channel = Int32.Parse(current_note[0]);
-            int note_tone_offset = Int32.Parse(current_note[1]);
+            int note_channel = Int32.Parse(current_note[0], CultureInfo.InvariantCulture);
+            int note_tone_offset = Int32.Parse(current_note[1], CultureInfo.InvariantCulture);
             string note_start = current_note[2];
             string note_duration = current_note[3];
 
@@ -524,10 +524,10 @@ public class EntryPoint
             {
                 foreach (string[] track_channel in track_to_channel)
                 {
-                    int track_linear_index = Int32.Parse(track_channel[0]);
+                    int track_linear_index = Int32.Parse(track_channel[0], CultureInfo.InvariantCulture);
                     int track_index = track_audiovisual_grouping_index[track_linear_index][0];
                     //If this track's channel is equal to the MIDI note's channel
-                    if (Int32.Parse(track_channel[1]) == note_channel)
+                    if (Int32.Parse(track_channel[1], CultureInfo.InvariantCulture) == note_channel)
                     {
 
                         //Put an event on this track for this note
@@ -592,10 +592,10 @@ public class EntryPoint
             {
                 foreach (string[] track_channel in track_to_channel)
                 {
-                    int track_linear_index = Int32.Parse(track_channel[0]);
+                    int track_linear_index = Int32.Parse(track_channel[0], CultureInfo.InvariantCulture);
                     int track_index = track_linear_index;
                     //If this track's channel is equal to the MIDI note's channel
-                    if (Int32.Parse(track_channel[1]) == note_channel)
+                    if (Int32.Parse(track_channel[1], CultureInfo.InvariantCulture) == note_channel)
                     {
 
                         //Put an event on this track for this note
