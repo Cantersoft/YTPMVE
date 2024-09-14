@@ -121,9 +121,9 @@ def set_dictionary_to_tracks_length():
 	dict_event_tracks = {}
 	for counter, event_track in enumerate(combo_values_event_track):
 		array_event_track_titles.append(event_track)
-			
+		
 		dict_event_tracks[counter] = {}
-		dict_event_tracks[counter]['channel'] = '0'
+		dict_event_tracks[counter]['channel'] = array_midi_channel_indexes[0][0] # Set default channel to first possible channel
 		dict_event_tracks[counter]['flip_x'] = default_checkbox_flip_x_value  # Set default value for flip_x
 		dict_event_tracks[counter]['flip_y'] = default_checkbox_flip_y_value  # Set default value for flip_y
 		dict_event_tracks[counter]['legato_video'] = default_checkbox_legato_video_value  # Set default value for legato video	
@@ -195,9 +195,11 @@ def on_combo_box_event_track_select(event):
 		try:
 			#Set the combobox to the key in the midi channels dictionary that matches the value with an index of the event track dictionary's currently selected track's channel key's integer value in an ordered list of the midi channels dictionary
 			#dict_midi_channels[list(dict_midi_channels.keys())[int(dict_event_tracks[selected_event_track]['channel'])]]
-			combo_box_MIDI_channel.set(dict_midi_channels[int(dict_event_tracks[selected_event_track]['channel'])])	
+			combo_box_MIDI_channel.set(dict_midi_channels[int(dict_event_tracks[selected_event_track]['channel'])])
+			on_combo_box_midi_channel_select("<<ComboboxSelected>>")
 		except:
 			combo_box_MIDI_channel.set(combo_values_MIDI_channel[0])
+			on_combo_box_midi_channel_select("<<ComboboxSelected>>")
 		checkbox_flip_x_value.set(dict_event_tracks[selected_event_track]['flip_x'])
 		checkbox_flip_y_value.set(dict_event_tracks[selected_event_track]['flip_y'])
 		checkbox_legato_video_value.set(dict_event_tracks[selected_event_track]['legato_video'])
