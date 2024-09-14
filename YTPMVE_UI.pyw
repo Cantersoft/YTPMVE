@@ -190,11 +190,14 @@ def on_combo_box_event_track_select(event):
 			dict_event_tracks[selected_event_track]['legato_audio'] = default_checkbox_legato_audio_value  # Set default value for legato
 		
 		global dict_midi_channels	
-		#try:
-		#Set the combobox to the key in the midi channels dictionary that matches the value with an index of the event track dictionary's currently selected track's channel key's integer value in an ordered list of the midi channels dictionary
-		combo_box_MIDI_channel.set(dict_midi_channels[list(dict_midi_channels.keys())[int(dict_event_tracks[selected_event_track]['channel'])]]) 
-		#except:
-		#	return #combo_box_MIDI_channel.set(combo_values_MIDI_channel[0])
+
+		#Try to set the combobox value to the value specified in the event tracks dictionary, but if something invalid is set, then default to a default value
+		try:
+			#Set the combobox to the key in the midi channels dictionary that matches the value with an index of the event track dictionary's currently selected track's channel key's integer value in an ordered list of the midi channels dictionary
+			#dict_midi_channels[list(dict_midi_channels.keys())[int(dict_event_tracks[selected_event_track]['channel'])]]
+			combo_box_MIDI_channel.set(dict_midi_channels[int(dict_event_tracks[selected_event_track]['channel'])])	
+		except:
+			combo_box_MIDI_channel.set(combo_values_MIDI_channel[0])
 		checkbox_flip_x_value.set(dict_event_tracks[selected_event_track]['flip_x'])
 		checkbox_flip_y_value.set(dict_event_tracks[selected_event_track]['flip_y'])
 		checkbox_legato_video_value.set(dict_event_tracks[selected_event_track]['legato_video'])
