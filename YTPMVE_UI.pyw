@@ -111,8 +111,11 @@ def set_midi_channel_titles(MIDI_file):
 		combo_values_MIDI_channel.append(track_name)
 	print(combo_values_MIDI_channel)
 	combo_box_MIDI_channel.configure(values=combo_values_MIDI_channel)
-	combo_box_MIDI_channel.set(combo_values_MIDI_channel[0])
-	on_combo_box_midi_channel_select("<<ComboboxSelected>>")
+	try:
+		combo_box_MIDI_channel.set(combo_values_MIDI_channel[0])
+		on_combo_box_midi_channel_select("<<ComboboxSelected>>")
+	except IndexError:
+		YTPMVE.exitScript("Unable to index MIDI channels from the file selected. Please report this issue to the developer.", 1)
 	
 def set_dictionary_to_tracks_length():
 	pass
