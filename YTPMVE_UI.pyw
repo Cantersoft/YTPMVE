@@ -88,11 +88,14 @@ def file_open_dialogue():
 def set_midi_channel_titles(MIDI_file):
 	#dict_midi_channels dictionary is filled with the channel of each track name.
 	global dict_midi_channels
+	dict_midi_channels = {}
 	track_name = "Untitled"
 	for msg in MIDI_file:
 		if msg.type == "track_name":
 			track_name = msg.name
-		elif msg.is_cc():#This might grab control changes unrelated to tracks? Not sure, may be an issue later and this should be refined.
+		#This might grab control changes unrelated to tracks? Not sure, may be an issue later and this should be refined.
+		#Update 20250125: Only control change 0 is used for bank select, which serves a similar purpose to a program change.
+		elif (msg.type == "control_change" and msg.control == 0) or msg.type == "program_change":
 			channel = msg.channel
 			if channel not in dict_midi_channels:
 				dict_midi_channels[channel] = ('Channel {}: {}'.format(channel, track_name))
