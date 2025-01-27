@@ -1,5 +1,5 @@
 #YTPMVE
-#20240319
+#20250127
 
 import os, sys, subprocess
 from os import path
@@ -94,9 +94,9 @@ def process_midi(MIDI_filename):
 	print("Writing data.")
 
 	for i, j in enumerate(note_starts):#i becomes a counter, and j becomes the corresponding value in note_starts
-		timestamps_file.write(str(note_channels[i])+",")#Save channel number
-		timestamps_file.write(str(note_tones[i] - A440_REF)+",")#Save semitone offset
-		timestamps_file.write(str(note_starts[i])+",")#Save note start time
+		timestamps_file.write(str(note_channels[i])+"|")#Save channel number
+		timestamps_file.write(str(note_tones[i] - A440_REF)+"|")#Save semitone offset
+		timestamps_file.write(str(note_starts[i])+"|")#Save note start time
 		timestamps_file.write(str(note_durations[i])+"\n")#Save note duration
 		
 	exitScript("none", 0)	

@@ -1,5 +1,5 @@
 //YTPMVE
-//20240913
+//20250127
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -467,12 +467,12 @@ public class EntryPoint
         {
             try
             {
-                if (!(array_timecodes_src[i].Contains(",")))
+                if (!(array_timecodes_src[i].Contains("|")))
                 {
                     continue;//Don't read data from undelimited lines
                 }
 
-                string[] current_note = array_timecodes_src[i].Split(',');
+                string[] current_note = array_timecodes_src[i].Split('|');
 
                 int note_channel = Int32.Parse(current_note[0], CultureInfo.InvariantCulture);//Channel
                 int note_tone_offset = Int32.Parse(current_note[1], CultureInfo.InvariantCulture);//Semitone offset
@@ -481,7 +481,7 @@ public class EntryPoint
 
                 if (note_duration == "NULL")
                 {
-                    list_timecodes.Add(note_channel + "," + note_tone_offset + "," + note_start + "," + str_default_event_duration);
+                    list_timecodes.Add(note_channel + "|" + note_tone_offset + "|" + note_start + "|" + str_default_event_duration);
 
                     this_application.Project.Markers.Add(new Marker(Timecode.FromSeconds(note_start), "NULL DURATION"));
                     timestamps_contains_nulls = true;
@@ -510,7 +510,7 @@ public class EntryPoint
         //Duplicate the clip across the timeline according to the data in the timecodes array.
         foreach (string j in list_timecodes)
         {
-            string[] current_note = j.Split(',');//Parse "1,2" into {"1","2"}
+            string[] current_note = j.Split('|');//Parse "1|2" into {"1"|"2"}
 
             int note_channel = Int32.Parse(current_note[0], CultureInfo.InvariantCulture);
             int note_tone_offset = Int32.Parse(current_note[1], CultureInfo.InvariantCulture);
