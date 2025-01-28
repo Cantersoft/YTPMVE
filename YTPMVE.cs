@@ -31,13 +31,13 @@ public class EntryPoint
         }
 
     }
-    static void track_event_generate(Track track, string note_start, string note_duration)
+    static void track_event_generate(Track track, double note_start, double note_duration)
     {
         TrackEvent current_event = track.Events[0];
-        TrackEvent copied_event = current_event.Copy(track, Timecode.FromPositionString(note_start, RulerFormat.Seconds));
-        copied_event.AdjustStartLength(Timecode.FromPositionString(note_start, RulerFormat.Seconds), Timecode.FromPositionString(note_duration, RulerFormat.Seconds), false);
+        TrackEvent copied_event = current_event.Copy(track, Timecode.FromSeconds(note_start));
+        copied_event.AdjustStartLength(Timecode.FromSeconds(note_start), Timecode.FromSeconds(note_duration), false);
     }
-    static void audio_event_generate(Track audio_track, AudioEvent audio_track_source_audio_event, string note_start, string note_duration, int note_tone_offset, bool pitchsemis_supported)
+    static void audio_event_generate(Track audio_track, AudioEvent audio_track_source_audio_event, double note_start, double note_duration, int note_tone_offset, bool pitchsemis_supported)
     {
         if (!audio_track.IsAudio()) { return; }
         TrackEvent current_event;
@@ -58,8 +58,8 @@ public class EntryPoint
         }
 
         //Copy the audio event. MAKE THIS A FUNCTION
-        TrackEvent copied_event = current_event.Copy(audio_track, Timecode.FromPositionString(note_start, RulerFormat.Seconds));
-        copied_event.AdjustStartLength(Timecode.FromPositionString(note_start, RulerFormat.Seconds), Timecode.FromPositionString(note_duration, RulerFormat.Seconds), false);
+        TrackEvent copied_event = current_event.Copy(audio_track, Timecode.FromSeconds(note_start));
+        copied_event.AdjustStartLength(Timecode.FromSeconds(note_start), Timecode.FromSeconds(note_duration), false);
 
         /*PitchSemis NOT SUPPORTED IN VEGAS 14*/
         try
@@ -481,7 +481,7 @@ public class EntryPoint
 
                 if (note_duration == "NULL")
                 {
-                    list_timecodes.Add(note_channel + "|" + note_tone_offset + "|" + note_start + "|" + str_default_event_duration);
+                    list_timecodes.Add(current_note[0] + "|" + current_note[1] + "|" + current_note[2] + "|" + str_default_event_duration);
 
                     this_application.Project.Markers.Add(new Marker(Timecode.FromSeconds(note_start), "NULL DURATION"));
                     timestamps_contains_nulls = true;
@@ -514,8 +514,10 @@ public class EntryPoint
 
             int note_channel = Int32.Parse(current_note[0], CultureInfo.InvariantCulture);
             int note_tone_offset = Int32.Parse(current_note[1], CultureInfo.InvariantCulture);
-            string note_start = current_note[2];
-            string note_duration = current_note[3];
+            double note_start = Double.Parse(current_note[2], CultureInfo.InvariantCulture);
+            //string note_start = current_note[2];
+            double note_duration = Double.Parse(current_note[3], CultureInfo.InvariantCulture);
+            //string note_duration = current_note[3];
 
             //Search through the track to channel index
             iterator = 0;
