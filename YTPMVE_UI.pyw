@@ -1,5 +1,5 @@
 #YTPMVE
-#20250126
+#20250128
 from os import path
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -95,7 +95,8 @@ def set_midi_channel_titles(MIDI_file):
 			track_name = msg.name
 		#This might grab control changes unrelated to tracks? Not sure, may be an issue later and this should be refined.
 		#Update 20250125: Only control change 0 is used for bank select, which serves a similar purpose to a program change.
-		elif (msg.type == "control_change" and msg.control == 0) or msg.type == "program_change":
+		#Update 20250128: Some horribly malformed MIDIs jump right into notes and never specify which channels are being used, so note_on, and note_off messages also add channels now.
+		elif (msg.type == "control_change" and msg.control == 0) or msg.type == "program_change" or msg.type == "note_on" or msg.type == "note_off":
 			channel = msg.channel
 			if channel not in dict_midi_channels:
 				dict_midi_channels[channel] = ('Channel {}: {}'.format(channel, track_name))
