@@ -30,19 +30,36 @@ if '%errorlevel%' NEQ '0' (
 
 set /p vegasversion= Enter the version number for your Vegas installation (e.g. 18): 
 
-SET "var="&for /f "delims=0123456789" %%i in ("%vegasversion%") do set var=%%i
+set "var="&for /f "delims=0123456789" %%i in ("%vegasversion%") do set var=%%i
 if defined var (echo %vegasversion% is not a number! && pause && exit) else (echo Version: %vegasversion%)
 
 set scripts_installation_directory= "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE_VEGAS"
 set engine_installation_directory= "%ProgramFiles%\VEGAS\YTPMVE"
-set YTPMVE_cs= "YTPMVE.cs"
+set YTPMVE_cs= "%ProgramFiles%\VEGAS\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE_VEGAS\YTPMVE.cs"
 
-REM --> Modify YTPMVE.cs if Vegas is a version not supporting PitchSemis.
-REM --> Modify YTPMVE.cs if Vegas is a version using the Sony namespace.
+
 
 rmdir /s /q %engine_installation_directory%
 mkdir %engine_installation_directory%
 
+rmdir /s /q %scripts_installation_directory%
+mkdir %scripts_installation_directory%
+
+REM --> Change directories to legacy versions if using Vegas 13 or lower.
+if %vegasversion% LSS 14 (
+    set scripts_installation_directory= "%ProgramFiles%\Sony\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE_VEGAS"
+    set engine_installation_directory= "%ProgramFiles%\Sony\YTPMVE" 
+    set YTPMVE_cs= "%ProgramFiles%\Sony\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE_VEGAS\YTPMVE.cs"
+)    
+
+
+echo Y | xcopy YTPMVE.cs %scripts_installation_directory%
+echo Y | xcopy YTPMVE.cs.config %scripts_installation_directory%
+echo Y | xcopy Newtonsoft.Json.dll %scripts_installation_directory%
+
+
+REM --> Modify YTPMVE.cs if Vegas is a version not supporting PitchSemis.
+REM --> Modify YTPMVE.cs if Vegas is a version using the Sony namespace.
 if %vegasversion% LSS 16 (
     echo:
     echo Warning! PitchSemis not supported in Vegas %vegasversion%.
@@ -53,17 +70,8 @@ if %vegasversion% LSS 16 (
     if %vegasversion% LSS 14 (
         echo Changing namespace to Sony.Vegas.
         FindAndReplace.vbs %YTPMVE_cs% "using ScriptPortal.Vegas;" "using Sony.Vegas;"
-        set scripts_installation_directory= "%ProgramFiles%\Sony\VEGAS Pro %vegasversion%.0\Script Menu\YTPMVE_VEGAS"
-        set engine_installation_directory= "%ProgramFiles%\Sony\YTPMVE"
     )    
 )
-
-rmdir /s /q %scripts_installation_directory%
-mkdir %scripts_installation_directory%
-
-echo Y | xcopy YTPMVE.cs %scripts_installation_directory%
-echo Y | xcopy YTPMVE.cs.config %scripts_installation_directory%
-echo Y | xcopy Newtonsoft.Json.dll %scripts_installation_directory%
 
 echo Y | xcopy YTPMVE.py %engine_installation_directory%
 echo Y | xcopy YTPMVE_UI.pyw %engine_installation_directory%
