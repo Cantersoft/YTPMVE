@@ -1,5 +1,5 @@
 //YTPMVE
-//20250127
+//20250129
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -662,7 +662,48 @@ public class EntryPoint
         {
             source_event.Track.Events.Remove(source_event);
         }
-
+		
+		//Distribute overlapping duplicates to multiple tracks as needed
+		Track current_track = null;
+        Track track_below = null;
+        TrackEvent current_event = null;
+        TrackEvent next_event = null;
+        for (int i = 0; i < this_application.Project.Tracks.Count - 1; i++)
+        {
+            current_track = this_application.Project.Tracks[i];
+			for (int j = 0; j < current_track.Events.Count - 1; j++)
+			{
+                current_event = current_track.Events[j];
+                next_event = current_track.Events[current_event.Index + 1];
+				if (current_event.Start > next_event.Start || current_event.Start < next_event.End)
+                {
+					if (track_below != null)
+                    {
+						//move to track_below
+						current_event.Copy(this_application.Project.Tracks[track_below.Index], current_event.Start);
+                        current_event.Track.Events.Remove(current_event);
+                    }
+					else
+                    {
+                        //MessageBox.Show("before creating track", "Warning" , MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						//create track_below
+                        if(current_track.IsVideo()){
+                            track_below = new VideoTrack(current_track.Index+1, current_track.Name);
+                        }
+                        if(current_track.IsAudio()){
+                            track_below = new AudioTrack(current_track.Index+1, current_track.Name);
+                        }
+                        this_application.Project.Tracks.Add(track_below);
+                        //MessageBox.Show("after creating track", "Warning" , MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						//move to track_below
+						current_event.Copy(this_application.Project.Tracks[track_below.Index], current_event.Start);
+                        current_event.Track.Events.Remove(current_event);
+                    }
+                }
+			}
+            //Set the variable to null to ensure a new track is created on the next loop
+            track_below = null;
+		}
 
         //In this second loop, all other effects would be applied.
         iterator = -1;
