@@ -667,15 +667,15 @@ public class EntryPoint
 		Track current_track = null;
         Track track_below = null;
         TrackEvent current_event = null;
-        TrackEvent next_event = null;
+        TrackEvent previous_event = null;
         for (int i = 0; i < this_application.Project.Tracks.Count - 1; i++)
         {
             current_track = this_application.Project.Tracks[i];
-			for (int j = 0; j < current_track.Events.Count - 1; j++)
+			for (int j = current_track.Events.Count - 1; j > 0; j--)
 			{
                 current_event = current_track.Events[j];
-                next_event = current_track.Events[current_event.Index + 1];
-				if (current_event.Start > next_event.Start || current_event.Start < next_event.End)
+                previous_event = current_track.Events[current_event.Index - 1];
+				if (current_event.Start < previous_event.End)
                 {
 					if (track_below != null)
                     {
