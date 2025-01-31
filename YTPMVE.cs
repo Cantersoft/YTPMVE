@@ -680,8 +680,8 @@ public class EntryPoint
 					if (track_below != null)
                     {
 						//move to track_below
-						current_event.Copy(this_application.Project.Tracks[track_below.Index], current_event.Start);
-                        current_event.Track.Events.Remove(current_event);
+						previous_event.Copy(this_application.Project.Tracks[track_below.Index], previous_event.Start);
+                        previous_event.Track.Events.Remove(previous_event);
                     }
 					else
                     {
